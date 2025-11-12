@@ -1,6 +1,7 @@
 package com.uth.gestionhospitalaria.model;
 
 import com.uth.gestionhospitalaria.model.Clients.CitaClient;
+import com.uth.gestionhospitalaria.model.Clients.MedicamentoClient;
 import com.uth.gestionhospitalaria.model.Clients.PacienteClient;
 import com.uth.gestionhospitalaria.model.Clients.UsuarioClient;
 import retrofit2.Retrofit;
@@ -32,5 +33,8 @@ public class RetrofitClient {
 
     public static CitaClient getCitaApiClient() {
         return getClient().create(CitaClient.class);
+    }
+
+    public static MedicamentoClient getMedicamentoApiClient() {return getClient().create(MedicamentoClient.class);
     }
 }
