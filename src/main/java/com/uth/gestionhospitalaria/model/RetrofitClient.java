@@ -1,8 +1,6 @@
 package com.uth.gestionhospitalaria.model;
 
-import com.uth.gestionhospitalaria.model.Clients.CitaClient;
-import com.uth.gestionhospitalaria.model.Clients.PacienteClient;
-import com.uth.gestionhospitalaria.model.Clients.UsuarioClient;
+import com.uth.gestionhospitalaria.model.Clients.*;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
@@ -33,4 +31,17 @@ public class RetrofitClient {
     public static CitaClient getCitaApiClient() {
         return getClient().create(CitaClient.class);
     }
+
+    public static HistorialClient getHistorialClient() {
+        return getClient().create(HistorialClient.class);
+    }
+
+    public static PrescripcionClient getPrescripcionClient() {
+        return getClient().create(PrescripcionClient.class);
+    }
+
+    public static FacturaClient getFacturaClient() {
+        return getClient().create(FacturaClient.class);
+    }
+
 }
