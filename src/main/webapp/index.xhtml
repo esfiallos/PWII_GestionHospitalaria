@@ -1,104 +1,37 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:f="http://xmlns.jcp.org/jsf/core"
-      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-      xmlns:p="http://primefaces.org/ui">
-<h:head>
-    <title>Lofty - Index PrimeFaces</title>
-    <style type="text/css">
-        /* Opcional: Esto asegura que el layout ocupe toda la altura de la vista */
-        html, body, .layout-container {
-            height: 100%;
-            margin: 0;
-            padding: 0;
-        }
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
 
-        .layout-main-content {
-            /* Permite que el contenido central tenga scroll si es necesario */
-            overflow: auto;
+<h:head>
+    <title>Gestión Hospitalaria - Inicio</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
         }
     </style>
 </h:head>
+
 <h:body>
-    <h:form id="mainForm" class="layout-container p-d-flex p-flex-column">
-        <p:growl id="msgs" showDetail="true" life="3000"/>
+    <h:form>
+        <p:panel header="Bienvenido al Sistema de Gestión Hospitalaria">
+            <h:panelGrid columns="1" style="text-align: center;">
 
-        <div class="p-p-2 p-shadow-2">
-            <h:panelGroup style="padding:10px">
-                <h:outputText value="Lofty Apps - Panel de Ejemplo" style="font-size:20px;font-weight:bold"/>
-            </h:panelGroup>
-        </div>
+                <h:outputText value="Seleccione un módulo para comenzar:" style="font-size: 1.2em;"/>
 
-        <div class="p-d-flex p-flex-grow-1" style="overflow: hidden;"> <div class="p-p-2 p-col-fixed" style="width: 220px; background-color: #f8f9fa;">
-            <p:panel header="Menú">
-                <p:menu>
-                    <p:menuitem value="Inicio" icon="pi pi-home"/>
-                    <p:menuitem value="Nuevo" icon="pi pi-plus" onclick="PF('dlg').show();"/>
-                </p:menu>
-            </p:panel>
-        </div>
+                <p:button value="Gestión de Pacientes"
+                          icon="pi pi-users"
+                          outcome="pacientes"
+                          style="margin-top: 20px;" />
 
-            <div class="p-p-2 p-flex-grow-1 layout-main-content">
-                <p:toolbar style="margin-bottom:10px">
-                    <p:toolbarGroup>
-                        <p:inputText id="filter" value="#{itemBeans.filter}" placeholder="Buscar...">
-                            <p:ajax event="keyup" update="table" process="@this"/>
-                        </p:inputText>
-                        <p:commandButton value="Buscar" icon="pi pi-search"
-                                         action="#{itemBeans.filterAction}" update="table msgs"/>
-                    </p:toolbarGroup>
-                    <p:toolbarGroup align="right">
-                        <p:commandButton value="Agregar" icon="pi pi-plus" update="dlgForm"
-                                         oncomplete="PF('dlg').show();"/>
-                    </p:toolbarGroup>
-                </p:toolbar>
-
-                <p:panel header="Listado de Items">
-                    <p:dataTable id="table" var="it" value="#{itemBeans.items}"
-                                 paginator="true" rows="10" emptyMessage="No hay registros">
-                        <p:column headerText="ID">
-                            <h:outputText value="#{it.id}"/>
-                        </p:column>
-                        <p:column headerText="Nombre" sortBy="#{it.nombre}">
-                            <h:outputText value="#{it.nombre}"/>
-                        </p:column>
-                        <p:column headerText="Descripción">
-                            <h:outputText value="#{it.descripcion}"/>
-                        </p:column>
-                        <p:column headerText="Acciones" style="width:150px">
-                            <p:commandButton icon="pi pi-pencil" title="Editar"
-                                             actionListener="#{itemBeans.prepareEdit(it)}"
-                                             update=":mainForm:dlgForm" oncomplete="PF('dlg').show()"/>
-                            <p:commandButton icon="pi pi-trash" title="Eliminar" update="table msgs"
-                                             action="#{itemBeans.delete(it)}" process="@this">
-                                <f:ajax render="table msgs"/>
-                            </p:commandButton>
-                        </p:column>
-                    </p:dataTable>
-                </p:panel>
-            </div>
-        </div>
-
-
-
-        <p:dialog id="dlg" header="Crear / Editar Item" widgetVar="dlg" modal="true" resizable="false" closable="true">
-            <h:panelGrid id="dlgForm" columns="2" cellpadding="6">
-                <h:outputLabel for="name" value="Nombre:"/>
-                <p:inputText id="name" value="#{itemBeans.selected.nombre}" required="true" label="Nombre"/>
-
-                <h:outputLabel for="desc" value="Descripción:"/>
-                <p:inputTextarea id="desc" value="#{itemBeans.selected.descripcion}" rows="4" cols="30"/>
-
-                <f:facet name="footer">
-                    <p:commandButton value="Guardar" action="#{itemBeans.save}" update=":mainForm:table :mainForm:msgs"
-                                     oncomplete="PF('dlg').hide();"/>
-                    <p:commandButton value="Cancelar" onclick="PF('dlg').hide();" type="button"/>
-                </f:facet>
             </h:panelGrid>
-        </p:dialog>
-
+        </p:panel>
     </h:form>
 </h:body>
 </html>
