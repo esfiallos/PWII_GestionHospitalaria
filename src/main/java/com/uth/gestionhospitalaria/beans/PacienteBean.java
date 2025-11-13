@@ -27,7 +27,6 @@ public class PacienteBean implements Serializable {
         try {
 
         } catch (Exception e) {
-            System.err.println("--- [Prueba de Red] ¡FALLO! No se pudo conectar. Error: ---");
             e.printStackTrace(); // Esto nos dará el error de red exacto
         }
         this.pacienteInteractor = new PacienteInteractorImpl();
