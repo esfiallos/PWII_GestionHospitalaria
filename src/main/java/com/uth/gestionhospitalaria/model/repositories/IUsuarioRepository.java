@@ -16,5 +16,5 @@ public interface IUsuarioRepository {
 
     boolean eliminar(int id);
 
-    public Usuario autenticar(String dni, String password);
+    Usuario autenticar(String dni, String password);
 }

@@ -30,7 +30,7 @@ public class FacturaInteractorImpl implements IFacturaInteractor {
             System.err.println("Error de negocio: Cita, Paciente y Monto > 0 son obligatorios.");
             return false;
         }
-        factura.setEstado_pago("PENDIENTE"); // Regla de negocio
+        factura.setEstado_pago("PENDIENTE");
         return this.facturaRepository.crear(factura);
     }
 
@@ -41,7 +41,7 @@ public class FacturaInteractorImpl implements IFacturaInteractor {
             System.err.println("Error de negocio: No se encontró la factura.");
             return false;
         }
-        factura.setEstado_pago("PAGADA"); // Regla de negocio
+        factura.setEstado_pago("PAGADA");
         return this.facturaRepository.actualizar(factura);
     }
 }

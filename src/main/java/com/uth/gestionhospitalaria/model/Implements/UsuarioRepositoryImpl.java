@@ -14,8 +14,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class UsuarioRepositoryImpl implements IUsuarioRepository {
-
-    private UsuarioClient usuarioClient;
+    private final UsuarioClient usuarioClient;
 
     public UsuarioRepositoryImpl(){
         this.usuarioClient = RetrofitClient.getUsuarioApiClient();
@@ -28,10 +27,10 @@ public class UsuarioRepositoryImpl implements IUsuarioRepository {
             Response<OrdsResponse<Usuario>> response = call.execute();
 
             if (response.isSuccessful() && response.body() != null) {
-                return response.body().getItems(); // Devuelve la lista limpia
+                return response.body().getItems();
             }
         } catch (IOException e) {
-            e.printStackTrace(); // Manejar el error
+            e.printStackTrace();
         }
         return Collections.emptyList();
     }
@@ -53,17 +52,43 @@ public class UsuarioRepositoryImpl implements IUsuarioRepository {
 
     @Override
     public boolean crear(Usuario usuario) {
-        return false;
+        try {
+            // Llama al método 'crear' del cliente
+            Call<Void> call = usuarioClient.crear(usuario);
+            // Ejecuta la llamada
+            Response<Void> response = call.execute();
+            return response.isSuccessful();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     @Override
-    public boolean actualizar(Usuario paciente) {
-        return false;
+    public boolean actualizar(Usuario usuario) {
+        try {
+            // Regla de negocio: no enviar la contraseña en una actualización de perfil
+            usuario.setPassword(null);
+
+            Call<Void> call = usuarioClient.actualizar(usuario.getId_usuario(), usuario);
+            Response<Void> response = call.execute();
+            return response.isSuccessful();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     @Override
     public boolean eliminar(int id) {
-        return false;
+        try {
+            Call<Void> call = usuarioClient.eliminar(id);
+            Response<Void> response = call.execute();
+            return response.isSuccessful();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     @Override
@@ -75,18 +100,21 @@ public class UsuarioRepositoryImpl implements IUsuarioRepository {
             // 2. Llamar al método 'autenticar' del cliente
             Call<Usuario> call = usuarioClient.autenticar(requestBody);
 
-            // 3. Ejecutar la llamada
             Response<Usuario> response = call.execute();
 
             if (response.isSuccessful() && response.body() != null) {
+                //  responde 200 OK, devuelve el objeto Usuario
                 return response.body();
             }
 
             // Si no fue exitosa (ej: 401 Unauthorized),
+            // la ejecución continúa y devuelve null.
 
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        // Devuelve null si las credenciales son incorrectas o hay un error de red
         return null;
     }
 }

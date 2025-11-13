@@ -15,7 +15,8 @@ public interface ICitaRepository {
 
     boolean eliminar(int id);
 
+    List<CitaMedica> listarPorPaciente(int id);
+
     // Metodos Pendientes
     // List<CitaMedica> listarPorDoctor(int idDoctor);
-    // List<CitaMedica> listarPorPaciente(int idPaciente);
 }

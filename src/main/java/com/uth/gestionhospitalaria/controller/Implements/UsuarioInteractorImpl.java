@@ -47,8 +47,6 @@ public class UsuarioInteractorImpl implements IUsuarioInteractor {
             System.err.println("Error de negocio: DNI y Password son obligatorios.");
             return false;
         }
-        // Aquí iría la lógica para HASHEAR la contraseña antes de enviarla
-        // Por ahora, la pasamos tal cual
         return this.usuarioRepository.crear(usuario);
     }
 

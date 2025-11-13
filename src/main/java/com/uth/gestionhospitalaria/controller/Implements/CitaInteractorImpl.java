@@ -30,6 +30,18 @@ public class CitaInteractorImpl implements ICitaInteractor {
             System.err.println("Error de negocio: Paciente, Doctor y Fecha son obligatorios.");
             return false;
         }
+
+        try {
+            java.time.LocalDateTime fechaCita = java.time.LocalDateTime.parse(cita.getFecha_hora_cita());
+            if (fechaCita.isBefore(java.time.LocalDateTime.now())) {
+                System.err.println("Error de negocio: No se puede agendar una cita en el pasado.");
+                return false;
+            }
+        } catch (Exception e) {
+            System.err.println("Error: Formato de fecha inválido.");
+            return false;
+        }
+
         // Aquí podrías validar que la fecha no sea en el pasado
         return this.citaRepository.crear(cita);
     }
@@ -45,9 +57,17 @@ public class CitaInteractorImpl implements ICitaInteractor {
 
     @Override
     public boolean cancelarCita(int id) {
-        // En lugar de un borrado físico (DELETE),
-        // lo ideal sería un borrado lógico (actualizar el estado a 'CANCELADA')
-        // Pero para seguir el patrón del CRUD, llamamos a eliminar:
-        return this.citaRepository.eliminar(id);
+        // 1. Buscar la cita
+        CitaMedica cita = this.citaRepository.buscarPorId(id);
+        if (cita == null) {
+            System.err.println("Error: No se encontró la cita a cancelar.");
+            return false;
+        }
+
+        // 2. Cambio de Estado
+        cita.setEstado_cita("CANCELADA");
+
+        // 3. Actualizar
+        return this.citaRepository.actualizar(cita);
     }
 }
