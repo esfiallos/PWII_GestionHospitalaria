@@ -13,10 +13,10 @@ import java.util.List;
 
 public class MedicamentoRepositoryImpl implements IMedicamentoRepository {
 
-    private MedicamentoClient medicamentoClient;
+    private final MedicamentoClient medicamentoClient;
 
     public MedicamentoRepositoryImpl() {
-        this.medicamentoClient = RetrofitClient.getMedicamentoApiClient();
+        this.medicamentoClient = RetrofitClient.getMedicamentoClient();
     }
 
     @Override

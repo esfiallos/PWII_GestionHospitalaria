@@ -16,7 +16,7 @@ import java.util.List;
 
 public class CitasRepositoryImpl implements ICitaRepository {
 
-    private CitaClient citaClient;
+    private final CitaClient citaClient;
 
     public CitasRepositoryImpl() {
         this.citaClient = RetrofitClient.getCitaApiClient();

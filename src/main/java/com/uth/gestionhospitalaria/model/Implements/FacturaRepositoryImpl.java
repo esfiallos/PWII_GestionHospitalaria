@@ -12,7 +12,7 @@ import java.util.List;
 
 public class FacturaRepositoryImpl implements IFacturaRepository {
 
-    private FacturaClient facturaClient;
+    private final FacturaClient facturaClient;
 
     public FacturaRepositoryImpl() {
         this.facturaClient = RetrofitClient.getFacturaClient();

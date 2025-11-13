@@ -16,7 +16,7 @@ public class PacienteRepositoryImpl implements IPacienteRepository {
 
 
         // La interfaz de Retrofit
-        private PacienteClient pacienteClient;
+        private final PacienteClient pacienteClient;
 
         public PacienteRepositoryImpl() {
             this.pacienteClient = RetrofitClient.getPacienteApiClient();

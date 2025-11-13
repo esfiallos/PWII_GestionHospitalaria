@@ -13,7 +13,7 @@ import java.util.List;
 
 public class HistorialRepositoryImpl implements IHistorialRepository {
 
-    private HistorialClient historialClient;
+    private final HistorialClient historialClient;
 
     public HistorialRepositoryImpl() {
         this.historialClient = RetrofitClient.getHistorialClient();

@@ -13,7 +13,7 @@ import java.util.List;
 
 public class PrescripcionRepositoryImpl implements IPrescripcionRepository {
 
-    private PrescripcionClient prescripcionClient;
+    private final PrescripcionClient prescripcionClient;
 
     public PrescripcionRepositoryImpl() {
         this.prescripcionClient = RetrofitClient.getPrescripcionClient();
