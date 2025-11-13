@@ -6,11 +6,7 @@ public class LoginRequest {
     private String dni;
     private String password;
 
-    /**
-     * Constructor para crear el objeto de solicitud.
-     * @param dni El DNI del usuario.
-     * @param password La contraseña en texto plano.
-     */
+
     public LoginRequest(String dni, String password) {
         this.dni = dni;
         this.password = password;

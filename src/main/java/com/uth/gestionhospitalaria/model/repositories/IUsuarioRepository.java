@@ -15,4 +15,6 @@ public interface IUsuarioRepository {
     boolean actualizar(Usuario paciente);
 
     boolean eliminar(int id);
+
+    public Usuario autenticar(String dni, String password);
 }

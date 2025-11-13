@@ -7,13 +7,9 @@ import com.uth.gestionhospitalaria.model.repositories.IPacienteRepository;
 
 import java.util.List;
 
-/**
- * Implementación del Interactor de Pacientes.
- * Contiene la lógica de negocio.
- */
+
 public class PacienteInteractorImpl implements IPacienteInteractor {
 
-    // El Interactor DEPENDE de la capa de Repositorio
     private final IPacienteRepository pacienteRepository;
 
     public PacienteInteractorImpl() {

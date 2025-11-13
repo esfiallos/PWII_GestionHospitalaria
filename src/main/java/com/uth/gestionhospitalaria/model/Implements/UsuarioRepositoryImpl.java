@@ -1,5 +1,6 @@
 package com.uth.gestionhospitalaria.model.Implements;
 
+import com.uth.gestionhospitalaria.data.LoginRequest;
 import com.uth.gestionhospitalaria.data.OrdsResponse;
 import com.uth.gestionhospitalaria.data.Usuario;
 import com.uth.gestionhospitalaria.model.Clients.UsuarioClient;
@@ -63,5 +64,29 @@ public class UsuarioRepositoryImpl implements IUsuarioRepository {
     @Override
     public boolean eliminar(int id) {
         return false;
+    }
+
+    @Override
+    public Usuario autenticar(String dni, String password) {
+        try {
+            // 1. Crear el objeto de solicitud con los datos
+            LoginRequest requestBody = new LoginRequest(dni, password);
+
+            // 2. Llamar al método 'autenticar' del cliente
+            Call<Usuario> call = usuarioClient.autenticar(requestBody);
+
+            // 3. Ejecutar la llamada
+            Response<Usuario> response = call.execute();
+
+            if (response.isSuccessful() && response.body() != null) {
+                return response.body();
+            }
+
+            // Si no fue exitosa (ej: 401 Unauthorized),
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }
