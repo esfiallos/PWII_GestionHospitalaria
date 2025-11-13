@@ -23,12 +23,7 @@ public class PacienteBean implements Serializable {
     // 2. Inicialización
     @PostConstruct
     public void init() {
-        // Instancia la lógica y el estado
-        try {
 
-        } catch (Exception e) {
-            e.printStackTrace(); // Esto nos dará el error de red exacto
-        }
         this.pacienteInteractor = new PacienteInteractorImpl();
         this.viewModel = new PacienteViewModel();
 
@@ -67,8 +62,8 @@ public class PacienteBean implements Serializable {
      */
     public void guardar() {
         Paciente paciente = this.viewModel.getPacienteSeleccionado();
-        boolean resultado = false;
-        String mensaje = "";
+        boolean resultado;
+        String mensaje;
 
         try {
             if (paciente.getId_paciente() == 0) {
