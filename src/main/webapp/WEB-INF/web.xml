@@ -20,4 +20,14 @@
         <param-name>primefaces.THEME</param-name>
         <param-value>arya-blue</param-value>
     </context-param>
+
+    <filter>
+        <filter-name>LoginFilter</filter-name>
+        <filter-class>com.uth.gestionhospitalaria.security.LoginFilter</filter-class>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>LoginFilter</filter-name>
+        <servlet-name>Faces Servlet</servlet-name>
+    </filter-mapping>
 </web-app>
