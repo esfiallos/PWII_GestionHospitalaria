@@ -14,6 +14,9 @@ import java.net.URI;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import okhttp3.logging.HttpLoggingInterceptor;
+import org.jetbrains.annotations.NotNull;
+
 public class RetrofitClient {
 
     private static final String BASE_URL = "https://oracleapex.com/ords/uthpw/GH/";
@@ -23,9 +26,12 @@ public class RetrofitClient {
     private static Retrofit getClient() {
         if (retrofit == null) {
             try {
+                HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
+                logging.setLevel(HttpLoggingInterceptor.Level.BODY);
+
                 OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
 
-                // 1. Mantenemos los timeouts
+                // 1.  timeouts
                 httpClient.connectTimeout(30, TimeUnit.SECONDS);
                 httpClient.readTimeout(30, TimeUnit.SECONDS);
                 httpClient.writeTimeout(30, TimeUnit.SECONDS);
@@ -33,15 +39,14 @@ public class RetrofitClient {
                 // 2. fix de HTTP/1.1
                 httpClient.protocols(List.of(Protocol.HTTP_1_1));
 
-                // 3.  selector de Proxy
+                // 3. selector de Proxy
                 System.setProperty("java.net.useSystemProxies", "true");
                 List<java.net.Proxy> proxies = ProxySelector.getDefault().select(new URI(BASE_URL));
                 if (proxies != null && !proxies.isEmpty()) {
                     httpClient.proxy(proxies.getFirst());
                 }
 
-                //  User-Agent de Navegador ---
-                //  disfraza nuestra solicitud para que parezca un navegador
+                // User-Agent de Navegador
                 httpClient.addInterceptor(new Interceptor() {
                     @NotNull
                     @Override
@@ -55,7 +60,9 @@ public class RetrofitClient {
                     }
                 });
 
-                //  Retrofit
+                httpClient.addInterceptor(logging);
+
+                // Retrofit
                 retrofit = new Retrofit.Builder()
                         .baseUrl(BASE_URL)
                         .addConverterFactory(GsonConverterFactory.create())
