@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+<ui:composition template="templates.xhtml">
+    <ui:define name="contenido">
+        <h:form id="form">
+            <p:growl id="growl" showDetail="true" />
+
+            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                <p:commandButton value="Sí" type="button" styleClass="ui-confirmdialog-yes" icon="pi pi-check" />
+                <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="pi pi-times" />
+            </p:confirmDialog>
+
+            <p:panel header="Gestión de Facturación">
+                <p:dataTable id="tablaFacturas"
+                             value="#{facturaBean.viewModel.listaFacturas}"
+                             var="factura"
+                             emptyMessage="No se encontraron facturas"
+                             paginator="true" rows="10">
+
+                    <p:column headerText="ID Factura" sortBy="#{factura.id_factura}">
+                        <h:outputText value="#{factura.id_factura}" />
+                    </p:column>
+                    <p:column headerText="ID Cita">
+                        <h:outputText value="#{factura.id_cita_fk}" />
+                    </p:column>
+                    <p:column headerText="ID Paciente">
+                        <h:outputText value="#{factura.id_paciente_fk}" />
+                    </p:column>
+                    <p:column headerText="Fecha Emisión" sortBy="#{factura.fecha_emision}">
+                        <h:outputText value="#{factura.fecha_emision}" />
+                    </p:column>
+                    <p:column headerText="Monto Total" sortBy="#{factura.monto_total}">
+                        <h:outputText value="#{factura.monto_total}">
+                            <f:convertNumber type="currency" currencySymbol="L. " />
+                        </h:outputText>
+                    </p:column>
+                    <p:column headerText="Estado" filterBy="#{factura.estado_pago}" filterMatchMode="exact">
+                        <f:facet name="filter">
+                            <p:selectOneMenu onchange="PF('tablaFacturas').filter()" styleClass="custom-filter">
+                                <f:selectItem itemLabel="Todos" itemValue="#{null}" noSelectionOption="true" />
+                                <f:selectItem itemLabel="PENDIENTE" itemValue="PENDIENTE" />
+                                <f:selectItem itemLabel="PAGADA" itemValue="PAGADA" />
+                            </p:selectOneMenu>
+                        </f:facet>
+                        <h:outputText value="#{factura.estado_pago}" />
+                    </p:column>
+
+                    <p:column style="width:100px;text-align: center">
+                        <p:commandButton icon="pi pi-money-bill"
+                                         title="Marcar como Pagada"
+                                         actionListener="#{facturaBean.marcarComoPagada()}"
+                                         update=":form:tablaFacturas :form:growl"
+                                         styleClass="rounded-button ui-button-success"
+                                         process="@this"
+                                         rendered="#{factura.estado_pago == 'PENDIENTE'}">
+                            <f:setPropertyActionListener value="#{factura}" target="#{facturaBean.viewModel.facturaSeleccionada}" />
+                            <p:confirm header="Confirmación" message="¿Marcar la factura #{factura.id_factura} como PAGADA?" icon="pi pi-check"/>
+                        </p:commandButton>
+                    </p:column>
+
+                </p:dataTable>
+            </p:panel>
+        </h:form>
+    </ui:define>
+</ui:composition>
+</html>

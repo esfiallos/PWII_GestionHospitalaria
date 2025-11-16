@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+<ui:composition template="templates.xhtml">
+    <ui:define name="contenido">
+        <h:form id="form">
+            <p:growl id="growl" showDetail="true" />
+
+            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                <p:commandButton value="Sí" type="button" styleClass="ui-confirmdialog-yes" icon="pi pi-check" />
+                <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="pi pi-times" />
+            </p:confirmDialog>
+
+            <p:toolbar>
+                <p:toolbarGroup>
+                    <p:commandButton value="Nueva Cita" icon="pi pi-plus"
+                                     actionListener="#{citaBean.nuevo()}"
+                                     oncomplete="PF('dialogoCita').show()"
+                                     update=":form:panelDialogoCita" />
+                </p:toolbarGroup>
+            </p:toolbar>
+
+            <p:dataTable id="tablaCitas"
+                         value="#{citaBean.viewModel.listaCitas}"
+                         var="cita"
+                         emptyMessage="No se encontraron citas"
+                         paginator="true" rows="10">
+
+                <p:column headerText="ID Cita" sortBy="#{cita.id_cita}">
+                    <h:outputText value="#{cita.id_cita}" />
+                </p:column>
+
+                <p:column headerText="ID Paciente" filterBy="#{cita.id_paciente_fk}" filterMatchMode="contains">
+                    <h:outputText value="#{cita.id_paciente_fk}" />
+                </p:column>
+
+                <p:column headerText="ID Doctor" filterBy="#{cita.id_doctor_fk}" filterMatchMode="contains">
+                    <h:outputText value="#{cita.id_doctor_fk}" />
+                </p:column>
+
+                <p:column headerText="Fecha y Hora" sortBy="#{cita.fecha_hora_cita}">
+                    <h:outputText value="#{cita.fecha_hora_cita}" />
+                </p:column>
+
+                <p:column headerText="Estado" filterBy="#{cita.estado_cita}" filterMatchMode="exact">
+                    <f:facet name="filter">
+                        <p:selectOneMenu onchange="PF('tablaCitas').filter()" styleClass="custom-filter">
+                            <f:selectItem itemLabel="Todos" itemValue="#{null}" noSelectionOption="true" />
+                            <f:selectItem itemLabel="AGENDADA" itemValue="AGENDADA" />
+                            <f:selectItem itemLabel="COMPLETADA" itemValue="COMPLETADA" />
+                            <f:selectItem itemLabel="CANCELADA" itemValue="CANCELADA" />
+                        </p:selectOneMenu>
+                    </f:facet>
+                    <h:outputText value="#{cita.estado_cita}" />
+                </p:column>
+
+                <p:column style="width:120px; text-align: center">
+                    <p:commandButton icon="pi pi-pencil"
+                                     update=":form:panelDialogoCita"
+                                     oncomplete="PF('dialogoCita').show()"
+                                     styleClass="rounded-button ui-button-success"
+                                     process="@this">
+                        <f:setPropertyActionListener value="#{cita}" target="#{citaBean.viewModel.citaSeleccionada}" />
+                    </p:commandButton>
+
+                    <p:commandButton icon="pi pi-times"
+                                     actionListener="#{citaBean.cancelar()}"
+                                     update=":form:tablaCitas :form:growl"
+                                     styleClass="rounded-button ui-button-danger"
+                                     process="@this"
+                                     rendered="#{cita.estado_cita != 'CANCELADA'}">
+                        <f:setPropertyActionListener value="#{cita}" target="#{citaBean.viewModel.citaSeleccionada}" />
+                        <p:confirm header="Confirmación" message="¿Seguro que desea CANCELAR esta cita?" icon="pi pi-exclamation-triangle"/>
+                    </p:commandButton>
+                </p:column>
+
+            </p:dataTable>
+
+            <p:dialog header="Datos de la Cita" widgetVar="dialogoCita" modal="true"
+                      showEffect="fade" hideEffect="fade" resizable="false">
+
+                <p:outputPanel id="panelDialogoCita" style="text-align:center;">
+                    <p:panelGrid columns="2" style="margin: 0 auto;">
+
+                        <p:outputLabel for="paciente" value="Paciente:" />
+                        <p:selectOneMenu id="paciente" value="#{citaBean.viewModel.citaSeleccionada.id_paciente_fk}" required="true">
+                            <f:selectItem itemLabel="Seleccione un paciente" itemValue="#{null}" noSelectionOption="true" />
+                            <f:selectItems value="#{citaBean.viewModel.listaPacientesDropdown}"
+                                           var="p"
+                                           itemLabel="#{p.nombre} #{p.apellido} (#{p.dni})"
+                                           itemValue="#{p.id_paciente}" />
+                        </p:selectOneMenu>
+
+                        <p:outputLabel for="doctor" value="Doctor:" />
+                        <p:selectOneMenu id="doctor" value="#{citaBean.viewModel.citaSeleccionada.id_doctor_fk}" required="true">
+                            <f:selectItem itemLabel="Seleccione un doctor" itemValue="#{null}" noSelectionOption="true" />
+                            <f:selectItems value="#{citaBean.viewModel.listaDoctoresDropdown}"
+                                           var="d"
+                                           itemLabel="#{d.nombre} #{d.apellido} (#{d.especialidad})"
+                                           itemValue="#{d.id_usuario}" />
+                        </p:selectOneMenu>
+
+                        <p:outputLabel for="fecha" value="Fecha y Hora:" />
+                        <p:calendar id="fecha" value="#{citaBean.viewModel.citaSeleccionada.fecha_hora_cita}"
+                                    pattern="yyyy-MM-dd HH:mm" showTime="true" required="true" />
+
+                        <p:outputLabel for="motivo" value="Motivo Consulta:" />
+                        <p:inputTextarea id="motivo" value="#{citaBean.viewModel.citaSeleccionada.motivo_consulta}" rows="3" />
+
+                        <p:outputLabel for="estado" value="Estado:" />
+                        <p:selectOneMenu id="estado" value="#{citaBean.viewModel.citaSeleccionada.estado_cita}" required="true">
+                            <f:selectItem itemLabel="AGENDADA" itemValue="AGENDADA" />
+                            <f:selectItem itemLabel="COMPLETADA" itemValue="COMPLETADA" />
+                            <f:selectItem itemLabel="CANCELADA" itemValue="CANCELADA" />
+                        </p:selectOneMenu>
+
+                    </p:panelGrid>
+
+                    <p:commandButton value="Guardar"
+                                     actionListener="#{citaBean.guardar()}"
+                                     update=":form:tablaCitas :form:growl"
+                                     oncomplete="if (args &amp;&amp; !args.validationFailed) PF('dialogoCita').hide();" />
+                </p:outputPanel>
+            </p:dialog>
+
+        </h:form>
+    </ui:define>
+</ui:composition>
+</html>

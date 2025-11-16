@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+<ui:composition template="templates.xhtml">
+    <ui:define name="contenido">
+        <h:form id="form">
+            <p:growl id="growl" showDetail="true" />
+
+            <p:panel header="Historiales Clínicos">
+                <p:dataTable id="tablaHistoriales"
+                             value="#{historialBean.viewModel.listaHistoriales}"
+                             var="hist"
+                             emptyMessage="No se encontraron historiales"
+                             paginator="true" rows="5"
+                             selectionMode="single"
+                             selection="#{historialBean.viewModel.historialSeleccionado}"
+                             rowKey="#{hist.id_historial}">
+
+                    <p:ajax event="rowSelect"
+                            listener="#{historialBean.onHistorialSeleccionado}"
+                            update=":form:panelDetalleHistorial" />
+
+                    <p:column headerText="ID Historial">
+                        <h:outputText value="#{hist.id_historial}" />
+                    </p:column>
+                    <p:column headerText="ID Cita">
+                        <h:outputText value="#{hist.id_cita_fk}" />
+                    </p:column>
+                    <p:column headerText="ID Paciente">
+                        <h:outputText value="#{hist.id_paciente_fk}" />
+                    </p:column>
+                    <p:column headerText="Diagnóstico" filterBy="#{hist.diagnostico}" filterMatchMode="contains">
+                        <h:outputText value="#{hist.diagnostico}" />
+                    </p:column>
+                </p:dataTable>
+            </p:panel>
+
+            <p:spacer height="20" />
+
+            <p:outputPanel id="panelDetalleHistorial">
+                <p:panel header="Detalle del Historial: #{historialBean.viewModel.historialSeleccionado.id_historial}"
+                         rendered="#{historialBean.viewModel.historialSeleccionado.id_historial > 0}">
+
+                    <p:panelGrid columns="2" layout="grid">
+                        <h:panelGroup>
+                            <p:outputLabel for="diag" value="Diagnóstico:" />
+                            <p:inputText id="diag" value="#{historialBean.viewModel.historialSeleccionado.diagnostico}" style="width: 100%"/>
+                        </h:panelGroup>
+                        <h:panelGroup>
+                            <p:outputLabel for="notas" value="Notas del Doctor:" />
+                            <p:inputTextarea id="notas" value="#{historialBean.viewModel.historialSeleccionado.notas_doctor}" rows="3" style="width: 100%"/>
+                        </h:panelGroup>
+                    </p:panelGrid>
+                    <p:toolbar style="margin-top: 10px;">
+                        <p:toolbarGroup>
+                            <p:commandButton value="Añadir Prescripción" icon="pi pi-plus"
+                                             oncomplete="PF('dialogoPrescripcion').show()"
+                                             update=":form:panelDialogoPrescripcion"
+                                             process="@this" />
+                        </p:toolbarGroup>
+                    </p:toolbar>
+
+                    <p:dataTable id="tablaPrescripciones"
+                                 value="#{historialBean.viewModel.prescripcionesDelHistorial}"
+                                 var="presc"
+                                 emptyMessage="No hay prescripciones para este historial.">
+
+                        <p:column headerText="ID Prescripción">
+                            <h:outputText value="#{presc.id_prescripcion}" />
+                        </p:column>
+                        <p:column headerText="ID Medicamento">
+                            <h:outputText value="#{presc.id_medicamento_fk}" />
+                        </p:column>
+                        <p:column headerText="Cantidad">
+                            <h:outputText value="#{presc.cantidad}" />
+                        </p:column>
+                        <p:column headerText="Dosis">
+                            <h:outputText value="#{presc.dosis}" />
+                        </p:column>
+                    </p:dataTable>
+
+                </p:panel>
+            </p:outputPanel>
+
+            <p:dialog header="Añadir Prescripción" widgetVar="dialogoPrescripcion" modal="true"
+                      showEffect="fade" hideEffect="fade" resizable="false">
+
+                <p:outputPanel id="panelDialogoPrescripcion" style="text-align:center;">
+                    <p:panelGrid columns="2" style="margin: 0 auto;">
+
+                        <p:outputLabel for="med" value="Medicamento:" />
+                        <p:selectOneMenu id="med" value="#{historialBean.viewModel.prescripcionNueva.id_medicamento_fk}" required="true">
+                            <f:selectItem itemLabel="Seleccione..." itemValue="#{null}" noSelectionOption="true" />
+                            <f:selectItems value="#{historialBean.viewModel.catalogoMedicamentos}"
+                                           var="m"
+                                           itemLabel="#{m.nombre_comercial}"
+                                           itemValue="#{m.id_medicamento}" />
+                        </p:selectOneMenu>
+
+                        <p:outputLabel for="cant" value="Cantidad:" />
+                        <p:spinner id="cant" value="#{historialBean.viewModel.prescripcionNueva.cantidad}" min="1" required="true" />
+
+                        <p:outputLabel for="dosis" value="Dosis:" />
+                        <p:inputText id="dosis" value="#{historialBean.viewModel.prescripcionNueva.dosis}" required="true" />
+
+                    </p:panelGrid>
+
+                    <p:commandButton value="Guardar"
+                                     actionListener="#{historialBean.guardarPrescripcion()}"
+                                     update=":form:tablaPrescripciones :form:growl"
+                                     oncomplete="if (args &amp;&amp; !args.validationFailed) PF('dialogoPrescripcion').hide();" />
+                </p:outputPanel>
+            </p:dialog>
+
+        </h:form>
+    </ui:define>
+</ui:composition>
+</ html>

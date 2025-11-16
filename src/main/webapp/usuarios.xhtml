@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+<ui:composition template="templates.xhtml">
+    <ui:define name="contenido">
+        <h:form id="form">
+            <p:growl id="growl" showDetail="true" />
+
+            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                <p:commandButton value="Sí" type="button" styleClass="ui-confirmdialog-yes" icon="pi pi-check" />
+                <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="pi pi-times" />
+            </p:confirmDialog>
+
+            <p:toolbar>
+                <p:toolbarGroup>
+                    <p:commandButton value="Nuevo Usuario" icon="pi pi-plus"
+                                     actionListener="#{usuarioBean.nuevo()}"
+                                     oncomplete="PF('dialogoUsuario').show()"
+                                     update=":form:panelDialogoUsuario" />
+                </p:toolbarGroup>
+            </p:toolbar>
+
+            <p:dataTable id="tablaUsuarios"
+                         value="#{usuarioBean.viewModel.listaUsuarios}"
+                         var="user"
+                         emptyMessage="No se encontraron usuarios"
+                         paginator="true" rows="10">
+
+                <p:column headerText="ID">
+                    <h:outputText value="#{user.id_usuario}" />
+                </p:column>
+                <p:column headerText="DNI" filterBy="#{user.dni}" filterMatchMode="contains">
+                    <h:outputText value="#{user.dni}" />
+                </p:column>
+                <p:column headerText="Nombre" filterBy="#{user.nombre}" filterMatchMode="contains">
+                    <h:outputText value="#{user.nombre}" />
+                </p:column>
+                <p:column headerText="Apellido" filterBy="#{user.apellido}" filterMatchMode="contains">
+                    <h:outputText value="#{user.apellido}" />
+                </p:column>
+                <p:column headerText="Rol" filterBy="#{user.rol}" filterMatchMode="exact">
+                    <h:outputText value="#{user.rol}" />
+                </p:column>
+                <p:column headerText="Estado" filterBy="#{user.estado}" filterMatchMode="exact">
+                    <h:outputText value="#{user.estado}" />
+                </p:column>
+                <p:column headerText="Especialidad" filterBy="#{user.especialidad}" filterMatchMode="contains">
+                    <h:outputText value="#{user.especialidad}" />
+                </p:column>
+
+                <p:column style="width:100px;text-align: center">
+                    <p:commandButton icon="pi pi-pencil"
+                                     update=":form:panelDialogoUsuario"
+                                     oncomplete="PF('dialogoUsuario').show()"
+                                     styleClass="rounded-button ui-button-success"
+                                     process="@this">
+                        <f:setPropertyActionListener value="#{user}" target="#{usuarioBean.viewModel.usuarioSeleccionado}" />
+                    </p:commandButton>
+
+                    <p:commandButton icon="pi pi-trash"
+                                     actionListener="#{usuarioBean.eliminar()}"
+                                     update=":form:tablaUsuarios :form:growl"
+                                     styleClass="rounded-button ui-button-danger"
+                                     process="@this">
+                        <f:setPropertyActionListener value="#{user}" target="#{usuarioBean.viewModel.usuarioSeleccionado}" />
+                        <p:confirm header="Confirmación" message="¿Seguro que desea eliminar a #{user.nombre}?" icon="pi pi-exclamation-triangle"/>
+                    </p:commandButton>
+                </p:column>
+
+            </p:dataTable>
+
+            <p:dialog header="Datos del Usuario" widgetVar="dialogoUsuario" modal="true"
+                      showEffect="fade" hideEffect="fade" resizable="false">
+
+                <p:outputPanel id="panelDialogoUsuario" style="text-align:center;">
+                    <p:panelGrid columns="2" style="margin: 0 auto;">
+
+                        <p:outputLabel for="dni" value="DNI:" />
+                        <p:inputText id="dni" value="#{usuarioBean.viewModel.usuarioSeleccionado.dni}" required="true" />
+
+                        <p:outputLabel for="nombre" value="Nombre:" />
+                        <p:inputText id="nombre" value="#{usuarioBean.viewModel.usuarioSeleccionado.nombre}" required="true" />
+
+                        <p:outputLabel for="apellido" value="Apellido:" />
+                        <p:inputText id="apellido" value="#{usuarioBean.viewModel.usuarioSeleccionado.apellido}" required="true" />
+
+                        <p:outputLabel for="email" value="Email:" />
+                        <p:inputText id="email" value="#{usuarioBean.viewModel.usuarioSeleccionado.email}" />
+
+                        <p:outputLabel for="especialidad" value="Especialidad:" />
+                        <p:inputText id="especialidad" value="#{usuarioBean.viewModel.usuarioSeleccionado.especialidad}" />
+
+                        <p:outputLabel for="rol" value="Rol:" />
+                        <p:selectOneMenu id="rol" value="#{usuarioBean.viewModel.usuarioSeleccionado.rol}" required="true">
+                            <f:selectItem itemLabel="ADMIN" itemValue="ADMIN" />
+                            <f:selectItem itemLabel="DOCTOR" itemValue="DOCTOR" />
+                            <f:selectItem itemLabel="RECEPCION" itemValue="RECEPCION" />
+                        </p:selectOneMenu>
+
+                        <p:outputLabel for="estado" value="Estado:" />
+                        <p:selectOneMenu id="estado" value="#{usuarioBean.viewModel.usuarioSeleccionado.estado}" required="true">
+                            <f:selectItem itemLabel="ACTIVO" itemValue="ACTIVO" />
+                            <f:selectItem itemLabel="INACTIVO" itemValue="INACTIVO" />
+                        </p:selectOneMenu>
+
+                        <h:panelGroup rendered="#{usuarioBean.viewModel.usuarioSeleccionado.id_usuario == 0}">
+                            <p:outputLabel for="pass" value="Password:" />
+                        </h:panelGroup>
+                        <h:panelGroup rendered="#{usuarioBean.viewModel.usuarioSeleccionado.id_usuario == 0}">
+                            <p:password id="pass" value="#{usuarioBean.viewModel.usuarioSeleccionado.password}" required="true" />
+                        </h:panelGroup>
+
+                    </p:panelGrid>
+
+                    <p:commandButton value="Guardar"
+                                     actionListener="#{usuarioBean.guardar()}"
+                                     update=":form:tablaUsuarios :form:growl"
+                                     oncomplete="if (args &amp;&amp; !args.validationFailed) PF('dialogoUsuario').hide();" />
+                </p:outputPanel>
+            </p:dialog>
+
+        </h:form>
+    </ui:define>
+</ui:composition>
+</html>
