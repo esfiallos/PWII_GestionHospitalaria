@@ -80,4 +80,9 @@ public class CitasRepositoryImpl implements ICitaRepository {
         }
     }
 
+    @Override
+    public List<CitaMedica> listarPorPaciente(int id) {
+        return List.of();
+    }
+
 }

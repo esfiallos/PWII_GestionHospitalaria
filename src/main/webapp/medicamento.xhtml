@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+    <title>Gestión de Medicamentos</title>
+</h:head>
+
+<h:body>
+    <h:form id="form">
+        <!-- Mensajes globales -->
+        <p:growl id="growl" showDetail="true" />
+
+        <!-- Confirmación para eliminar -->
+        <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+            <p:commandButton value="Sí" type="button" styleClass="ui-confirmdialog-yes" icon="pi pi-check" />
+            <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="pi pi-times" />
+        </p:confirmDialog>
+
+        <!-- Toolbar -->
+        <p:toolbar>
+            <p:toolbarGroup>
+                <p:commandButton value="Nuevo Medicamento" icon="pi pi-plus"
+                                 actionListener="#{medicamentoBean.nuevo()}"
+                                 oncomplete="PF('dialogoMedicamento').show()"
+                                 update=":form:panelDialogo" />
+            </p:toolbarGroup>
+        </p:toolbar>
+
+        <!-- Tabla de medicamentos -->
+        <p:dataTable id="tablaMedicamentos"
+                     value="#{medicamentoBean.medicamentoViewModel.listaMedicamentos}"
+                     var="med"
+                     emptyMessage="No se encontraron medicamentos"
+                     paginator="true" rows="10">
+
+            <p:column headerText="ID">
+                <h:outputText value="#{med.id_medicamento}" />
+            </p:column>
+
+            <p:column headerText="Nombre Comercial" filterBy="#{med.nombre_comercial}" filterMatchMode="contains">
+                <h:outputText value="#{med.nombre_comercial}" />
+            </p:column>
+
+            <p:column headerText="Principio Activo" filterBy="#{med.principio_activo}" filterMatchMode="contains">
+                <h:outputText value="#{med.principio_activo}" />
+            </p:column>
+
+            <p:column headerText="Stock">
+                <h:outputText value="#{med.stock}" />
+            </p:column>
+
+            <p:column headerText="Precio Unitario">
+                <h:outputText value="#{med.precio_unitario}" />
+            </p:column>
+
+            <!-- Botones de acción -->
+            <p:column style="width:120px;text-align:center">
+                <p:commandButton icon="pi pi-pencil"
+                                 update=":form:panelDialogo"
+                                 oncomplete="PF('dialogoMedicamento').show()"
+                                 styleClass="rounded-button ui-button-success"
+                                 process="@this">
+                    <f:setPropertyActionListener value="#{med}" target="#{medicamentoBean.medicamentoViewModel.medicamentoSeleccionado}" />
+                </p:commandButton>
+
+                <p:commandButton icon="pi pi-trash"
+                                 actionListener="#{medicamentoBean.eliminar()}"
+                                 update=":form:tablaMedicamentos :form:growl"
+                                 styleClass="rounded-button ui-button-danger"
+                                 process="@this">
+                    <f:setPropertyActionListener value="#{med}" target="#{medicamentoBean.medicamentoViewModel.medicamentoSeleccionado}" />
+                    <p:confirm header="Confirmación" message="¿Seguro que desea eliminar #{med.nombre_comercial}?" icon="pi pi-exclamation-triangle"/>
+                </p:commandButton>
+            </p:column>
+
+        </p:dataTable>
+
+        <!-- Diálogo de formulario -->
+        <p:dialog header="Datos del Medicamento" widgetVar="dialogoMedicamento" modal="true"
+                  showEffect="fade" hideEffect="fade" resizable="false">
+
+            <p:outputPanel id="panelDialogo" style="text-align:center;">
+                <p:panelGrid columns="2" style="margin:0 auto;">
+
+                    <p:outputLabel for="nombre" value="Nombre Comercial:" />
+                    <p:inputText id="nombre" value="#{medicamentoBean.medicamentoViewModel.medicamentoSeleccionado.nombre_comercial}" required="true" />
+
+                    <p:outputLabel for="principio" value="Principio Activo:" />
+                    <p:inputText id="principio" value="#{medicamentoBean.medicamentoViewModel.medicamentoSeleccionado.principio_activo}" required="true" />
+
+                    <p:outputLabel for="stock" value="Stock:" />
+                    <p:inputText id="stock" value="#{medicamentoBean.medicamentoViewModel.medicamentoSeleccionado.stock}" required="true" />
+
+                    <p:outputLabel for="precio" value="Precio Unitario:" />
+                    <p:inputText id="precio" value="#{medicamentoBean.medicamentoViewModel.medicamentoSeleccionado.precio_unitario}" required="true" />
+
+                </p:panelGrid>
+
+                <p:commandButton value="Guardar"
+                                 actionListener="#{medicamentoBean.guardar()}"
+                                 update=":form:tablaMedicamentos :form:growl"
+                                 oncomplete="if (args &amp;&amp; !args.validationFailed) PF('dialogoMedicamento').hide();" />
+            </p:outputPanel>
+        </p:dialog>
+
+    </h:form>
+</h:body>
+</html>
