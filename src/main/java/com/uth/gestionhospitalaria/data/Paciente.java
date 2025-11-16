@@ -1,11 +1,13 @@
 package com.uth.gestionhospitalaria.data;
 
+import java.util.Date;
+
 public class Paciente {
     private int id_paciente;
     private String dni;
     private String nombre;
     private String apellido;
-    private String fecha_nacimiento;
+    private Date fecha_nacimiento;
     private String telefono;
     private String direccion;
 
@@ -29,7 +31,7 @@ public class Paciente {
         return apellido;
     }
 
-    public String getFecha_nacimiento() {
+    public Date getFecha_nacimiento() {
         return fecha_nacimiento;
     }
 
@@ -57,7 +59,7 @@ public class Paciente {
         this.nombre = nombre;
     }
 
-    public void setFecha_nacimiento(String fecha_nacimiento) {
+    public void setFecha_nacimiento(Date fecha_nacimiento) {
         this.fecha_nacimiento = fecha_nacimiento;
     }
 

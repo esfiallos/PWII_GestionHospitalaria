@@ -1,5 +1,6 @@
 package com.uth.gestionhospitalaria.model;
 
+import com.google.gson.GsonBuilder;
 import com.uth.gestionhospitalaria.model.Clients.*;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
@@ -62,11 +63,15 @@ public class RetrofitClient {
 
                 httpClient.addInterceptor(logging);
 
+                GsonBuilder gsonBuilder = new GsonBuilder()
+                        .setDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+
                 // Retrofit
-                retrofit = new Retrofit.Builder()
-                        .baseUrl(BASE_URL)
-                        .addConverterFactory(GsonConverterFactory.create())
-                        .client(httpClient.build())
+                Retrofit.Builder builder = new Retrofit.Builder();
+                builder.baseUrl(BASE_URL);
+                builder.addConverterFactory(GsonConverterFactory.create(gsonBuilder.create()));
+                builder.client(httpClient.build());
+                retrofit = builder
                         .build();
 
             } catch (Exception e) {

@@ -90,8 +90,11 @@
                     <p:inputText id="apellido" value="#{pacienteBean.viewModel.pacienteSeleccionado.apellido}" required="true" />
 
                     <p:outputLabel for="fecha" value="Fecha Nacimiento:" />
-                    <p:calendar id="fecha" value="#{pacienteBean.viewModel.pacienteSeleccionado.fecha_nacimiento}" pattern="yyyy-MM-dd" />
-
+                    <p:calendar id="fecha"
+                                value="#{pacienteBean.viewModel.pacienteSeleccionado.fecha_nacimiento}"
+                                pattern="yyyy-MM-dd"
+                                navigator="true"
+                                yearRange="c-100:c" />
                     <p:outputLabel for="tel" value="Teléfono:" />
                     <p:inputText id="tel" value="#{pacienteBean.viewModel.pacienteSeleccionado.telefono}" />
 
