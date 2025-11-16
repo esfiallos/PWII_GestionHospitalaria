@@ -116,7 +116,7 @@ public class PacienteBean implements Serializable {
         return viewModel;
     }
 
-    // Método de ayuda para mostrar mensajes en JSF
+    //Método de ayuda para mostrar mensajes en JSF
     private void addMessage(FacesMessage.Severity severity, String summary, String detail) {
         FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(severity, summary, detail));
     }

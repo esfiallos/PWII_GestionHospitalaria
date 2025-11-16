@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:f="jakarta.faces.core"
+      xmlns:h="jakarta.faces.html">
+<f:view>
+    <h:head><title>Login</title></h:head>
+    <h:body>
+        <h:form>
+
+            <h2>Iniciar Sesión</h2>
+
+            <!-- MENSAJE DE ERROR -->
+            <h:panelGroup rendered="#{not empty loginBean.loginViewModel.mensajeError}">
+                <h:outputText value="#{loginBean.loginViewModel.mensajeError}"
+                              style="color:red; font-weight:bold;" />
+                <br/><br/>
+            </h:panelGroup>
+
+            <!-- DNI -->
+            <h:outputLabel for="dni" value="DNI:"/><br/>
+            <h:inputText id="dni"
+                         value="#{loginBean.loginViewModel.dni}" />
+            <br/><br/>
+
+            <!-- PASSWORD -->
+            <h:outputLabel for="password" value="Contraseña:"/><br/>
+            <h:inputSecret id="password"
+                           value="#{loginBean.loginViewModel.password}" />
+            <br/><br/>
+
+            <!-- BOTÓN DE LOGIN -->
+            <h:commandButton value="Ingresar"
+                             action="#{loginBean.login}" />
+
+        </h:form>
+    </h:body>
+</f:view>
+</html>
