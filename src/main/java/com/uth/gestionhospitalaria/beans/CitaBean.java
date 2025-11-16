@@ -3,7 +3,6 @@ package com.uth.gestionhospitalaria.beans;
 import com.uth.gestionhospitalaria.controller.Implements.CitaInteractorImpl;
 import com.uth.gestionhospitalaria.controller.Interactor.ICitaInteractor;
 import com.uth.gestionhospitalaria.data.CitaMedica;
-import com.uth.gestionhospitalaria.data.Paciente;
 import com.uth.gestionhospitalaria.view.CitaViewModel;
 import jakarta.annotation.PostConstruct;
 import jakarta.faces.application.FacesMessage;
