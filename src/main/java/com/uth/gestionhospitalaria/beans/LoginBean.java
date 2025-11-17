@@ -4,13 +4,14 @@ import com.uth.gestionhospitalaria.controller.Implements.UsuarioInteractorImpl;
 import com.uth.gestionhospitalaria.controller.Interactor.IUsuarioInteractor;
 import com.uth.gestionhospitalaria.data.Usuario;
 import com.uth.gestionhospitalaria.view.LoginViewModel;
+import jakarta.enterprise.context.SessionScoped;
 import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Named;
 
 import java.io.Serializable;
 
 @Named("loginBean")
-@ViewScoped
+@SessionScoped
 public class LoginBean  implements Serializable {
     private LoginViewModel loginViewModel;
     private final IUsuarioInteractor usuarioInteractor;
@@ -36,20 +37,18 @@ public class LoginBean  implements Serializable {
         }
 
         loginViewModel.setUsuarioLogueado(usuario);
+        loginViewModel.setMensajeError(null);
 
         String rol = usuario.getRol().toUpperCase();
 
-        switch (rol){
-            case "ADMIN":
-                return "null";
-            case "RECEPCIONISTA":
-                return "asdf";
-            case "DOCTOR":
-                return "/index.xhtml?faces-redirect=true";
-            default:
-                loginViewModel.setMensajeError("Error");
-                return null;
-        }
+        return switch (rol) {
+            case "ADMIN", "RECEPCIONISTA", "DOCTOR" -> "dashboard?faces-redirect=true";
+            default -> {
+                loginViewModel.setMensajeError("Error: Rol no reconocido.");
+                yield null;
+            }
+        };
+
     }
 
     public LoginViewModel getLoginViewModel() {

@@ -1,39 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html>
-<html lang="en"
-      xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:f="jakarta.faces.core"
-      xmlns:h="jakarta.faces.html">
-<f:view>
-    <h:head><title>Login</title></h:head>
-    <h:body>
-        <h:form>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
 
-            <h2>Iniciar Sesión</h2>
+<h:head>
+    <title>Iniciar Sesión - Gestión Hospitalaria</title>
+    <f:facet name="first">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    </f:facet>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            /* Usamos los colores del tema 'arya-blue' */
+            background-color: var(--surface-ground);
+            font-family: Arial, sans-serif;
+        }
 
-            <!-- MENSAJE DE ERROR -->
+        .login-panel .ui-panel-titlebar {
+            font-size: 1.25em;
+            font-weight: bold;
+        }
+
+        .login-grid {
+            margin: 20px;
+        }
+
+        .error-message {
+            color: var(--red-500); /* Color de error de PrimeFaces */
+            font-weight: bold;
+            margin-top: 10px;
+            text-align: center;
+        }
+    </style>
+</h:head>
+
+<h:body>
+
+    <p:panel header="Bienvenido al Sistema" style="width: 400px;" styleClass="login-panel">
+        <h:form id="loginForm">
+            <p:messages id="messages" showDetail="true" closable="true">
+                <p:autoUpdate/>
+            </p:messages>
+
             <h:panelGroup rendered="#{not empty loginBean.loginViewModel.mensajeError}">
-                <h:outputText value="#{loginBean.loginViewModel.mensajeError}"
-                              style="color:red; font-weight:bold;" />
-                <br/><br/>
+                <div class="error-message">
+                    <i class="pi pi-exclamation-triangle" style="margin-right: .5em;"></i>
+                    <h:outputText value="#{loginBean.loginViewModel.mensajeError}" />
+                </div>
             </h:panelGroup>
 
-            <!-- DNI -->
-            <h:outputLabel for="dni" value="DNI:"/><br/>
-            <h:inputText id="dni"
-                         value="#{loginBean.loginViewModel.dni}" />
-            <br/><br/>
+            <h:panelGrid columns="1" cellpadding="10" style="width: 100%;" styleClass="login-grid">
 
-            <!-- PASSWORD -->
-            <h:outputLabel for="password" value="Contraseña:"/><br/>
-            <h:inputSecret id="password"
-                           value="#{loginBean.loginViewModel.password}" />
-            <br/><br/>
+                <p:outputLabel for="dni" value="DNI (Usuario)" />
+                <p:inputText id="dni"
+                             value="#{loginBean.loginViewModel.dni}"
+                             required="true"
+                             requiredMessage="El DNI es obligatorio."
+                             placeholder="Ingrese su DNI"
+                             style="width: 100%;"/>
 
-            <!-- BOTÓN DE LOGIN -->
-            <h:commandButton value="Ingresar"
-                             action="#{loginBean.login}" />
+                <p:outputLabel for="password" value="Contraseña" />
+                <p:password id="password"
+                            value="#{loginBean.loginViewModel.password}"
+                            required="true"
+                            requiredMessage="La contraseña es obligatoria."
+                            placeholder="Ingrese su contraseña"
+                            toggleMask="true"
+                            redisplay="true"
+                            style="width: 100%;"/>
 
+                <p:commandButton value="Ingresar"
+                                 action="#{loginBean.login}"
+                                 icon="pi pi-sign-in"
+                                 update="@form"
+                                 style="width: 100%; margin-top: 10px;"/>
+
+            </h:panelGrid>
         </h:form>
-    </h:body>
-</f:view>
+    </p:panel>
+
+</h:body>
 </html>

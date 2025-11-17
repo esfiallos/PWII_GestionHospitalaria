@@ -9,6 +9,13 @@
 </h:head>
 
 <h:body>
+    <ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                    xmlns:h="http://xmlns.jcp.org/jsf/html"
+                    xmlns:f="http://xmlns.jcp.org/jsf/core"
+                    xmlns:p="http://primefaces.org/ui"
+                    xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                    template="/template.xhtml">
+
     <h:form id="form">
         <p:growl id="growl" showDetail="true" />
 
@@ -75,7 +82,7 @@
 
 
         <p:dialog header="Datos del Paciente" widgetVar="dialogoPaciente" modal="true"
-                  showEffect="fade" hideEffect="fade" resizable="false">
+                  showEffect="fade" hideEffect="fade" resizable="false" appendTo="@(this)">
 
             <p:outputPanel id="panelDialogo" style="text-align:center;">
                 <p:panelGrid columns="2" style="margin: 0 auto;">
@@ -111,5 +118,7 @@
         </p:dialog>
 
     </h:form>
+
+    </ui:composition>
 </h:body>
 </html>
