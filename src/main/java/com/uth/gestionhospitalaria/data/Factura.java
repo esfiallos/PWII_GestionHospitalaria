@@ -1,11 +1,13 @@
 package com.uth.gestionhospitalaria.data;
 
+import java.util.Date;
+
 public class Factura {
 
     private int id_factura;
     private int id_cita_fk;
     private int id_paciente_fk;
-    private String fecha_emision; // String es más simple
+    private Date fecha_emision;
     private double monto_total;
     private String estado_pago;
 
@@ -37,11 +39,11 @@ public class Factura {
         this.id_paciente_fk = id_paciente_fk;
     }
 
-    public String getFecha_emision() {
+    public Date getFecha_emision() {
         return fecha_emision;
     }
 
-    public void setFecha_emision(String fecha_emision) {
+    public void setFecha_emision(Date fecha_emision) {
         this.fecha_emision = fecha_emision;
     }
 

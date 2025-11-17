@@ -62,6 +62,14 @@ public class HistorialBean implements Serializable {
 
         } catch (Exception e) {
             addMessage(FacesMessage.SEVERITY_ERROR, "Error", "No se pudieron cargar datos (Pacientes/Medicamentos)");
+
+
+            mapaPacientes = java.util.Collections.emptyMap();
+            mapaMedicamentos = java.util.Collections.emptyMap();
+
+            if (historialViewModel != null) {
+                historialViewModel.setCatalogoMedicamentos(java.util.Collections.emptyList());
+            }
         }
     }
 

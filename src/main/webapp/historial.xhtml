@@ -26,11 +26,8 @@
             <p:dataTable id="tablaHistoriales"
                          value="#{historialBean.historialViewModel.listaHistoriales}"
                          var="hist"
-                         emptyMessage="No se encontraron
-historiales"
+                         emptyMessage="No se encontraron historiales"
                          paginator="true" rows="10">
-
-                <f:event type="preRenderView" listener="#{historialBean.cargarHistoriales}" />
 
                 <p:column headerText="ID"><h:outputText value="#{hist.id_historial}" /></p:column>
                 <p:column headerText="ID Cita"><h:outputText value="#{hist.id_cita_fk}" /></p:column>
@@ -41,8 +38,7 @@ historiales"
                 <p:column headerText="Diagnóstico"><h:outputText value="#{hist.diagnostico}" /></p:column>
 
                 <p:column style="width:100px;text-align: center">
-                    <p:commandButton icon="pi
-pi-pencil"
+                    <p:commandButton icon="pi pi-pencil"
                                      oncomplete="PF('dialogoHistorial').show()"
                                      styleClass="rounded-button ui-button-success"
                                      process="@this"
@@ -81,18 +77,21 @@ pi-pencil"
                         <p:commandButton value="Guardar Historial"
                                          actionListener="#{historialBean.guardarHistorial()}"
                                          update=":form:tablaHistoriales :form:growl"
-                                         oncomplete="if (args &amp;&amp;
-!args.validationFailed) PF('dialogoHistorial').hide();" />
+                                         oncomplete="if (args &amp;&amp; !args.validationFailed) PF('dialogoHistorial').hide();" />
                     </p:panel>
 
                     <p:outputPanel id="panelPrescripciones" style="margin-top: 20px;">
 
                         <p:panel header="Prescripciones">
 
-                            <h:panelGroup rendered="#{historialBean.historialViewModel.historialSeleccionado.id_historial
-== 0}">
-                                <p:message severity="info" text="Guarde los 'Detalles del Historial' primero.
-Las prescripciones se activarán después de guardar." />
+                            <h:panelGroup rendered="#{historialBean.historialViewModel.historialSeleccionado.id_historial == 0}">
+
+                                <div class="ui-message ui-message-info ui-widget ui-corner-all" style="width: 95%; margin: 10px auto; padding: 10px; box-sizing: border-box;">
+                                    <span class="ui-message-icon pi pi-info-circle" style="margin-right: .5em; vertical-align: middle;"></span>
+                                    <span class="ui-message-text" style="vertical-align: middle;">
+                                        Guarde los 'Detalles del Historial' primero. Las prescripciones se activarán después de guardar.
+                                    </span>
+                                </div>
                             </h:panelGroup>
 
                             <h:panelGroup rendered="#{historialBean.historialViewModel.historialSeleccionado.id_historial != 0}">

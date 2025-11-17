@@ -1,124 +1,86 @@
-<!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:f="http://xmlns.jcp.org/jsf/core"
-      xmlns:p="http://primefaces.org/ui">
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="/template.xhtml">
 
-<h:head>
-    <title>Gestión de Pacientes</title>
-</h:head>
+    <ui:define name="title">
+        Dashboard
+    </ui:define>
 
-<h:body>
-    <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-                    xmlns:h="http://xmlns.jcp.org/jsf/html"
-                    xmlns:f="http://xmlns.jcp.org/jsf/core"
-                    xmlns:p="http://primefaces.org/ui"
-                    xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-                    template="/template.xhtml">
-
+    <ui:define name="content">
         <h:form id="form">
-            <p:growl id="growl" showDetail="true" />
 
-            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
-                <p:commandButton value="Sí" type="button" styleClass="ui-confirmdialog-yes" icon="pi pi-check" />
-                <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="pi pi-times" />
-            </p:confirmDialog>
+            <p:panelGrid columns="3" style="width: 100%; margin-bottom: 20px;" styleClass="ui-noborder">
 
-            <p:toolbar>
-                <p:toolbarGroup>
-                    <p:commandButton value="Nuevo Paciente" icon="pi pi-plus"
-                                     actionListener="#{pacienteBean.nuevo()}"
-                                     oncomplete="PF('dialogoPaciente').show()"
-                                     update=":form:panelDialogo" />
-                </p:toolbarGroup>
-            </p:toolbar>
+                <p:panel header="Pacientes Activos" style="text-align: center;">
+                    <h:outputText value="#{dashboardBean.totalPacientes}" style="font-size: 2.5em; font-weight: bold;"/>
+                </p:panel>
 
-            <p:dataTable id="tablaPacientes"
-                         value="#{pacienteBean.viewModel.listaPacientes}"
-                         var="pac"
-                         emptyMessage="No se encontraron pacientes"
-                         paginator="true" rows="10">
+                <p:panel header="Doctores" style="text-align: center;">
+                    <h:outputText value="#{dashboardBean.totalDoctores}" style="font-size: 2.5em; font-weight: bold;"/>
+                </p:panel>
 
-                <p:column headerText="ID">
-                    <h:outputText value="#{pac.id_paciente}" />
-                </p:column>
+                <p:panel header="Recepcionistas" style="text-align: center;">
+                    <h:outputText value="#{dashboardBean.totalRecepcionistas}" style="font-size: 2.5em; font-weight: bold;"/>
+                </p:panel>
 
-                <p:column headerText="DNI" filterBy="#{pac.dni}" filterMatchMode="contains">
-                    <h:outputText value="#{pac.dni}" />
-                </p:column>
+            </p:panelGrid>
 
-                <p:column headerText="Nombre" filterBy="#{pac.nombre}" filterMatchMode="contains">
-                    <h:outputText value="#{pac.nombre}" />
-                </p:column>
+            <p:panel header="Estadísticas de Citas" style="margin-bottom: 20px;">
+                <p:panelGrid columns="3" style="width: 100%;" columnClasses="ui-g-4,ui-g-4,ui-g-4">
 
-                <p:column headerText="Apellido" filterBy="#{pac.apellido}" filterMatchMode="contains">
-                    <h:outputText value="#{pac.apellido}" />
-                </p:column>
+                    <h:panelGroup style="display: block; text-align: center; padding: 10px; background-color: var(--blue-100); border-radius: 6px;">
+                        <h:outputText value="Agendadas" style="display: block; font-size: 1.2em;"/>
+                        <h:outputText value="#{dashboardBean.citasAgendadas}" style="font-size: 2em; font-weight: bold;"/>
+                    </h:panelGroup>
 
-                <p:column headerText="Teléfono">
-                    <h:outputText value="#{pac.telefono}" />
-                </p:column>
+                    <h:panelGroup style="display: block; text-align: center; padding: 10px; background-color: var(--green-100); border-radius: 6px;">
+                        <h:outputText value="Completadas" style="display: block; font-size: 1.2em;"/>
+                        <h:outputText value="#{dashboardBean.citasCompletadas}" style="font-size: 2em; font-weight: bold;"/>
+                    </h:panelGroup>
 
-                <p:column style="width:100px;text-align: center">
-                    <p:commandButton icon="pi pi-pencil"
-                                     update=":form:panelDialogo"
-                                     oncomplete="PF('dialogoPaciente').show()"
-                                     styleClass="rounded-button ui-button-success"
-                                     process="@this">
-                        <f:setPropertyActionListener value="#{pac}" target="#{pacienteBean.viewModel.pacienteSeleccionado}" />
-                    </p:commandButton>
+                    <h:panelGroup style="display: block; text-align: center; padding: 10px; background-color: var(--red-100); border-radius: 6px;">
+                        <h:outputText value="Canceladas" style="display: block; font-size: 1.2em;"/>
+                        <h:outputText value="#{dashboardBean.citasCanceladas}" style="font-size: 2em; font-weight: bold;"/>
+                    </h:panelGroup>
 
-                    <p:commandButton icon="pi pi-trash"
-                                     actionListener="#{pacienteBean.eliminar()}"
-                                     update=":form:tablaPacientes :form:growl"
-                                     styleClass="rounded-button ui-button-danger"
-                                     process="@this">
-                        <f:setPropertyActionListener value="#{pac}" target="#{pacienteBean.viewModel.pacienteSeleccionado}" />
-                        <p:confirm header="Confirmación" message="¿Seguro que desea eliminar a #{pac.nombre}?" icon="pi pi-exclamation-triangle"/>
-                    </p:commandButton>
-                </p:column>
-
-            </p:dataTable>
+                </p:panelGrid>
+            </p:panel>
 
 
-            <p:dialog header="Datos del Paciente" widgetVar="dialogoPaciente" modal="true"
-                      showEffect="fade" hideEffect="fade" resizable="false" appendTo="@(this)">
+            <p:panel header="Próximas 5 Citas" style="margin-top: 20px;">
+                <p:dataTable value="#{dashboardBean.proximasCitas}" var="cita"
+                             emptyMessage="No hay próximas citas programadas.">
 
-                <p:outputPanel id="panelDialogo" style="text-align:center;">
-                    <p:panelGrid columns="2" style="margin: 0 auto;">
+                    <p:column headerText="Fecha y Hora" sortBy="#{cita.fecha_hora_cita}">
+                        <h:outputText value="#{cita.fecha_hora_cita}">
+                            <f:convertDateTime pattern="yyyy-MM-dd 'a las' HH:mm"/>
+                        </h:outputText>
+                    </p:column>
 
-                        <p:outputLabel for="dni" value="DNI:" />
-                        <p:inputText id="dni" value="#{pacienteBean.viewModel.pacienteSeleccionado.dni}" required="true" />
+                    <p:column headerText="Paciente" sortBy="#{dashboardBean.getNombrePaciente(cita.id_paciente_fk)}">
+                        <h:outputText value="#{dashboardBean.getNombrePaciente(cita.id_paciente_fk)}" />
+                    </p:column>
 
-                        <p:outputLabel for="nombre" value="Nombre:" />
-                        <p:inputText id="nombre" value="#{pacienteBean.viewModel.pacienteSeleccionado.nombre}" required="true" />
+                    <p:column headerText="Doctor" sortBy="#{dashboardBean.getNombreDoctor(cita.id_doctor_fk)}">
+                        <h:outputText value="#{dashboardBean.getNombreDoctor(cita.id_doctor_fk)}" />
+                    </p:column>
 
-                        <p:outputLabel for="apellido" value="Apellido:" />
-                        <p:inputText id="apellido" value="#{pacienteBean.viewModel.pacienteSeleccionado.apellido}" required="true" />
+                    <p:column headerText="Motivo">
+                        <h:outputText value="#{cita.motivo_consulta}" />
+                    </p:column>
 
-                        <p:outputLabel for="fecha" value="Fecha Nacimiento:" />
-                        <p:calendar id="fecha"
-                                    value="#{pacienteBean.viewModel.pacienteSeleccionado.fecha_nacimiento}"
-                                    pattern="yyyy-MM-dd"
-                                    navigator="true"
-                                    yearRange="c-100:c" />
-                        <p:outputLabel for="tel" value="Teléfono:" />
-                        <p:inputText id="tel" value="#{pacienteBean.viewModel.pacienteSeleccionado.telefono}" />
+                    <p:column headerText="Estado">
+                        <h:outputText value="#{cita.estado_cita}" />
+                    </p:column>
 
-                        <p:outputLabel for="dir" value="Dirección:" />
-                        <p:inputText id="dir" value="#{pacienteBean.viewModel.pacienteSeleccionado.direccion}" />
-
-                    </p:panelGrid>
-
-                    <p:commandButton value="Guardar"
-                                     actionListener="#{pacienteBean.guardar()}"
-                                     update=":form:tablaPacientes :form:growl"
-                                     oncomplete="if (args &amp;&amp; !args.validationFailed) PF('dialogoPaciente').hide();" />
-                </p:outputPanel>
-            </p:dialog>
+                </p:dataTable>
+            </p:panel>
 
         </h:form>
+    </ui:define>
 
-    </ui:composition>
-</h:body>
-</html>
+</ui:composition>
