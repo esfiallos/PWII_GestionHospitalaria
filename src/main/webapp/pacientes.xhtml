@@ -8,6 +8,7 @@
 
     <ui:define name="title">
         Gestión de Pacientes
+
     </ui:define>
 
     <ui:define name="content">
@@ -17,16 +18,19 @@
             <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
                 <p:commandButton value="Sí" type="button" styleClass="ui-confirmdialog-yes" icon="pi pi-check" />
                 <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="pi pi-times" />
+
             </p:confirmDialog>
 
             <p:toolbar>
                 <p:toolbarGroup>
                     <p:commandButton value="Nuevo Paciente" icon="pi pi-plus"
                                      actionListener="#{pacienteBean.nuevo()}"
+
                                      oncomplete="PF('dialogoPaciente').show()"
                                      update=":form:panelDialogo" />
                 </p:toolbarGroup>
             </p:toolbar>
+
 
             <p:dataTable id="tablaPacientes" value="#{pacienteBean.viewModel.listaPacientes}" var="pac"
                          emptyMessage="No se encontraron pacientes" paginator="true" rows="10">
@@ -34,12 +38,14 @@
                     <h:outputText value="#{pac.id_paciente}" />
                 </p:column>
 
+
                 <p:column headerText="DNI" filterBy="#{pac.dni}" filterMatchMode="contains">
                     <h:outputText value="#{pac.dni}" />
                 </p:column>
 
                 <p:column headerText="Nombre" filterBy="#{pac.nombre}" filterMatchMode="contains">
                     <h:outputText value="#{pac.nombre}" />
+
                 </p:column>
 
                 <p:column headerText="Apellido" filterBy="#{pac.apellido}" filterMatchMode="contains">
@@ -47,36 +53,44 @@
                 </p:column>
 
                 <p:column headerText="Teléfono">
+
                     <h:outputText value="#{pac.telefono}" />
                 </p:column>
 
                 <p:column style="width:100px;text-align: center">
                     <p:commandButton icon="pi pi-pencil"
                                      update=":form:panelDialogo"
+
                                      oncomplete="PF('dialogoPaciente').show()"
                                      styleClass="rounded-button ui-button-success"
+
                                      process="@this">
                         <f:setPropertyActionListener value="#{pac}" target="#{pacienteBean.viewModel.pacienteSeleccionado}" />
                     </p:commandButton>
 
                     <p:commandButton icon="pi pi-trash"
+
                                      actionListener="#{pacienteBean.eliminar()}"
                                      update=":form:tablaPacientes :form:growl"
                                      styleClass="rounded-button ui-button-danger"
+
                                      process="@this">
                         <f:setPropertyActionListener value="#{pac}" target="#{pacienteBean.viewModel.pacienteSeleccionado}" />
-                        <p:confirm header="Confirmación" message="¿Seguro que desea eliminar a #{pac.nombre}?" icon="pi pi-exclamation-triangle"/>
+                        <p:confirm header="Confirmación" message="¿Seguro que desea eliminar a #{pac.nombre}?"
+                                   icon="pi pi-exclamation-triangle"/>
                     </p:commandButton>
                 </p:column>
             </p:dataTable>
 
             <p:dialog header="Datos del Paciente" widgetVar="dialogoPaciente" modal="true"
                       showEffect="fade" hideEffect="fade" resizable="false" appendTo="@(this)">
+
                 <p:outputPanel id="panelDialogo" style="text-align:center;">
                     <p:panelGrid columns="2" style="margin: 0 auto;">
 
                         <p:outputLabel for="dni" value="DNI:" />
                         <p:inputText id="dni" value="#{pacienteBean.viewModel.pacienteSeleccionado.dni}" required="true" />
+
 
                         <p:outputLabel for="nombre" value="Nombre:" />
                         <p:inputText id="nombre" value="#{pacienteBean.viewModel.pacienteSeleccionado.nombre}" required="true" />
@@ -84,24 +98,30 @@
                         <p:outputLabel for="apellido" value="Apellido:" />
                         <p:inputText id="apellido" value="#{pacienteBean.viewModel.pacienteSeleccionado.apellido}" required="true" />
 
+
                         <p:outputLabel for="fecha" value="Fecha Nacimiento:" />
                         <p:calendar id="fecha"
                                     value="#{pacienteBean.viewModel.pacienteSeleccionado.fecha_nacimiento}"
+
                                     pattern="yyyy-MM-dd"
                                     navigator="true"
                                     yearRange="c-100:c" />
+
                         <p:outputLabel for="tel" value="Teléfono:" />
                         <p:inputText id="tel" value="#{pacienteBean.viewModel.pacienteSeleccionado.telefono}" />
 
                         <p:outputLabel for="dir" value="Dirección:" />
+
                         <p:inputText id="dir" value="#{pacienteBean.viewModel.pacienteSeleccionado.direccion}" />
 
                     </p:panelGrid>
 
                     <p:commandButton value="Guardar"
                                      actionListener="#{pacienteBean.guardar()}"
+
                                      update=":form:tablaPacientes :form:growl"
-                                     oncomplete="if (args &amp;&amp; !args.validationFailed) PF('dialogoPaciente').hide();" />
+                                     oncomplete="if (args &amp;&amp;
+ !args.validationFailed) PF('dialogoPaciente').hide();" />
                 </p:outputPanel>
             </p:dialog>
 

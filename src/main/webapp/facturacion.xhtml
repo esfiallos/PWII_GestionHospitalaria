@@ -8,6 +8,7 @@
 
     <ui:define name="title">
         Gestión de Facturación
+
     </ui:define>
 
     <ui:define name="content">
@@ -15,38 +16,47 @@
             <p:toolbar>
                 <p:toolbarGroup>
                     <p:commandButton value="Nueva Factura" icon="pi pi-plus"
+
                                      actionListener="#{facturaBean.nuevo()}"
                                      oncomplete="PF('dialogoFactura').show()"
                                      update=":form:panelDialogo" />
                 </p:toolbarGroup>
+
             </p:toolbar>
 
             <p:dataTable id="tablaFacturas"
                          value="#{facturaBean.facturaViewModel.listaFacturas}"
                          var="fact"
                          emptyMessage="No se encontraron facturas"
+
                          paginator="true" rows="10">
 
                 <f:event type="preRenderView" listener="#{facturaBean.cargarFacturas}" />
 
                 <p:column headerText="ID"><h:outputText value="#{fact.id_factura}" /></p:column>
                 <p:column headerText="ID Cita"><h:outputText value="#{fact.id_cita_fk}" /></p:column>
-                <p:column headerText="ID Paciente"><h:outputText value="#{fact.id_paciente_fk}" /></p:column>
+
+                <p:column headerText="Paciente"
+                          filterBy="#{facturaBean.getNombrePaciente(fact.id_paciente_fk)}"
+                          filterMatchMode="contains">
+                    <h:outputText value="#{facturaBean.getNombrePaciente(fact.id_paciente_fk)}" />
+                </p:column>
                 <p:column headerText="Fecha Emisión"><h:outputText value="#{fact.fecha_emision}" /></p:column>
                 <p:column headerText="Monto"><h:outputText value="#{fact.monto_total}" /></p:column>
                 <p:column headerText="Estado"><h:outputText value="#{fact.estado_pago}" /></p:column>
 
                 <p:column style="width:120px;text-align: center">
-                    <p:commandButton icon="pi pi-check"
-                                     title="Marcar como Pagada"
-                                     actionListener="#{facturaBean.marcarComoPagada(fact)}"
-                                     update=":form:tablaFacturas"
-                                     process="@this"
-                                     rendered="#{fact.estado_pago == 'PENDIENTE'}"
-                                     styleClass="rounded-button ui-button-success">
-                        <p:confirm header="Confirmación" message="¿Marcar esta factura como PAGADA?" icon="pi pi-check-circle"/>
+                    <p:commandButton
+                            icon="pi pi-check"
+                            title="Marcar como Pagada"
+                            actionListener="#{facturaBean.marcarComoPagada(fact)}"
+                            update=":form:tablaFacturas"
+                            process="@this"
+                            rendered="#{fact.estado_pago == 'PENDIENTE'}"
+                            styleClass="rounded-button ui-button-success">
+                        <p:confirm header="Confirmación" message="¿Marcar esta factura como PAGADA?"
+                                   icon="pi pi-check-circle"/>
                     </p:commandButton>
-
                     <p:commandButton icon="pi pi-pencil"
                                      update=":form:panelDialogo"
                                      oncomplete="PF('dialogoFactura').show()"
@@ -56,6 +66,7 @@
                         <f:setPropertyActionListener value="#{fact}" target="#{facturaBean.facturaViewModel.facturaSeleccionada}" />
                     </p:commandButton>
                 </p:column>
+
             </p:dataTable>
 
             <p:dialog header="Datos de la Factura" widgetVar="dialogoFactura" modal="true"
@@ -64,16 +75,23 @@
                 <p:outputPanel id="panelDialogo" style="text-align:center;">
                     <p:panelGrid columns="2" style="margin: 0 auto;">
 
+
                         <p:outputLabel for="cita" value="ID Cita:" />
                         <p:inputText id="cita" value="#{facturaBean.facturaViewModel.facturaSeleccionada.id_cita_fk}" required="true" />
 
-                        <p:outputLabel for="pac" value="ID Paciente:" />
-                        <p:inputText id="pac" value="#{facturaBean.facturaViewModel.facturaSeleccionada.id_paciente_fk}" required="true" />
-
+                        <p:outputLabel for="pac" value="Paciente:" />
+                        <p:selectOneMenu id="pac" value="#{facturaBean.facturaViewModel.facturaSeleccionada.id_paciente_fk}" required="true" filter="true" filterMatchMode="contains">
+                            <f:selectItem itemLabel="Seleccione paciente" itemValue="" />
+                            <f:selectItems value="#{facturaBean.mapaPacientes.entrySet()}"
+                                           var="entry"
+                                           itemLabel="#{entry.value}"
+                                           itemValue="#{entry.key}" />
+                        </p:selectOneMenu>
                         <p:outputLabel for="fecha" value="Fecha (YYYY-MM-DD):" />
                         <p:inputText id="fecha" value="#{facturaBean.facturaViewModel.facturaSeleccionada.fecha_emision}" required="true" />
 
                         <p:outputLabel for="monto" value="Monto Total:" />
+
                         <p:inputText id="monto" value="#{facturaBean.facturaViewModel.facturaSeleccionada.monto_total}" required="true" />
 
                         <p:outputLabel for="estado" value="Estado:" rendered="#{facturaBean.facturaViewModel.facturaSeleccionada.id_factura != 0}"/>
@@ -81,10 +99,13 @@
 
                     </p:panelGrid>
 
+
                     <p:commandButton value="Guardar"
                                      actionListener="#{facturaBean.guardar()}"
                                      update=":form:tablaFacturas"
-                                     oncomplete="if (args &amp;&amp; !args.validationFailed) PF('dialogoFactura').hide();" />
+
+                                     oncomplete="if (args &amp;&amp;
+ !args.validationFailed) PF('dialogoFactura').hide();" />
                 </p:outputPanel>
             </p:dialog>
         </h:form>

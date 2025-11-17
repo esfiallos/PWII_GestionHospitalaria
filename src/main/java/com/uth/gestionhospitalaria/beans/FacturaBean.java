@@ -4,6 +4,13 @@ import com.uth.gestionhospitalaria.controller.Implements.FacturaInteractorImpl;
 import com.uth.gestionhospitalaria.controller.Interactor.IFacturaInteractor;
 import com.uth.gestionhospitalaria.data.Factura;
 import com.uth.gestionhospitalaria.view.FacturaViewModel;
+
+import com.uth.gestionhospitalaria.controller.Implements.PacienteInteractorImpl;
+import com.uth.gestionhospitalaria.controller.Interactor.IPacienteInteractor;
+import com.uth.gestionhospitalaria.data.Paciente;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 import jakarta.annotation.PostConstruct;
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
@@ -19,12 +26,43 @@ public class FacturaBean implements Serializable {
     private IFacturaInteractor facturaInteractor;
     private FacturaViewModel facturaViewModel;
 
+    private IPacienteInteractor pacienteInteractor;
+    private Map<Integer, String> mapaPacientes;
+
+
     @PostConstruct
     public void init() {
         this.facturaInteractor = new FacturaInteractorImpl();
         this.facturaViewModel = new FacturaViewModel();
+
+        this.pacienteInteractor = new PacienteInteractorImpl();
+        cargarDatosRelacionados();
+
         cargarFacturas();
     }
+
+
+    private void cargarDatosRelacionados() {
+        try {
+            List<Paciente> pacientes = pacienteInteractor.consultarPacientes();
+            mapaPacientes = pacientes.stream()
+                    .collect(Collectors.toMap(Paciente::getId_paciente, p -> p.getNombre() + " " + p.getApellido()));
+
+        } catch (Exception e) {
+            addMessage(FacesMessage.SEVERITY_ERROR, "Error", "No se pudieron cargar datos (Pacientes)");
+        }
+    }
+
+
+    public String getNombrePaciente(int idPaciente) {
+        return mapaPacientes.getOrDefault(idPaciente, "ID: " + idPaciente);
+    }
+
+
+    public Map<Integer, String> getMapaPacientes() {
+        return mapaPacientes;
+    }
+
 
     public void cargarFacturas() {
         facturaViewModel.setEstaCargando(true);
@@ -50,11 +88,10 @@ public class FacturaBean implements Serializable {
 
         try{
             if (factura.getId_factura() == 0) {
-                // Nueva factura
                 resultado = facturaInteractor.generarFactura(factura);
                 mensaje = resultado ? "Factura generada" : "Error al generar la factura";
             } else {
-                // Actualización
+
                 resultado = facturaInteractor.consultarFacturaPorId(factura.getId_factura()) != null &&
                         facturaInteractor.consultarFacturaPorId(factura.getId_factura()).getEstado_pago() != null;
                 if(resultado) {
@@ -103,7 +140,6 @@ public class FacturaBean implements Serializable {
         }
     }
 
-    // Marcar factura como pagada
     public void marcarComoPagada(Factura factura) {
         try {
             boolean resultado = facturaInteractor.marcarComoPagada(factura.getId_factura());
