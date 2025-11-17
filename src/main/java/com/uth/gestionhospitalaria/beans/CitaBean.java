@@ -157,7 +157,7 @@ public class CitaBean implements Serializable {
             nuevaFactura.setId_cita_fk(citaCompletada.getId_cita());
             nuevaFactura.setId_paciente_fk(citaCompletada.getId_paciente_fk());
 
-            nuevaFactura.setMonto_total(0);
+            nuevaFactura.setMonto_total(1);
 
             nuevaFactura.setFecha_emision(new Date());
 
