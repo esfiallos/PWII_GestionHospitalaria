@@ -1,10 +1,12 @@
 package com.uth.gestionhospitalaria.data;
 
+import java.util.Date;
+
 public class CitaMedica {
     private int id_cita;
     private int id_paciente_fk;
     private int id_doctor_fk;
-    private String fecha_hora_cita;
+    private Date fecha_hora_cita;
     private String estado_cita;
     private String motivo_consulta;
 
@@ -36,11 +38,11 @@ public class CitaMedica {
         this.motivo_consulta = motivo_consulta;
     }
 
-    public String getFecha_hora_cita() {
+    public Date getFecha_hora_cita() {
         return fecha_hora_cita;
     }
 
-    public void setFecha_hora_cita(String fecha_hora_cita) {
+    public void setFecha_hora_cita(Date fecha_hora_cita) {
         this.fecha_hora_cita = fecha_hora_cita;
     }
 

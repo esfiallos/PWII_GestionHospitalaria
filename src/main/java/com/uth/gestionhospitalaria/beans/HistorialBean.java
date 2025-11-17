@@ -1,8 +1,14 @@
 package com.uth.gestionhospitalaria.beans;
 
 import com.uth.gestionhospitalaria.controller.Implements.HistorialInteractorImpl;
+import com.uth.gestionhospitalaria.controller.Implements.MedicamentoInteractorImpl;
+import com.uth.gestionhospitalaria.controller.Implements.PacienteInteractorImpl;
 import com.uth.gestionhospitalaria.controller.Implements.PrescripcionInteractorImpl;
+import com.uth.gestionhospitalaria.controller.Interactor.IMedicamentoInteractor;
+import com.uth.gestionhospitalaria.controller.Interactor.IPacienteInteractor;
 import com.uth.gestionhospitalaria.data.HistorialClinico;
+import com.uth.gestionhospitalaria.data.Medicamento;
+import com.uth.gestionhospitalaria.data.Paciente;
 import com.uth.gestionhospitalaria.data.Prescripcion;
 import com.uth.gestionhospitalaria.view.HistorialViewModel;
 import jakarta.annotation.PostConstruct;
@@ -13,6 +19,8 @@ import jakarta.inject.Named;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Named("historialBean")
 @ViewScoped
@@ -22,13 +30,53 @@ public class HistorialBean implements Serializable {
     private PrescripcionInteractorImpl prescripcionInteractor;
     private HistorialViewModel historialViewModel;
 
+    private IPacienteInteractor pacienteInteractor;
+    private IMedicamentoInteractor medicamentoInteractor;
+
+    private Map<Integer, String> mapaPacientes;
+    private Map<Integer, String> mapaMedicamentos;
+
     @PostConstruct
     public void init() {
         this.historialInteractor = new HistorialInteractorImpl();
         this.prescripcionInteractor = new PrescripcionInteractorImpl();
         this.historialViewModel = new HistorialViewModel();
+
+        this.pacienteInteractor = new PacienteInteractorImpl();
+        this.medicamentoInteractor = new MedicamentoInteractorImpl();
+        cargarDatosRelacionados();
+
         cargarHistoriales();
     }
+
+    private void cargarDatosRelacionados() {
+        try {
+            List<Paciente> pacientes = pacienteInteractor.consultarPacientes();
+            mapaPacientes = pacientes.stream()
+                    .collect(Collectors.toMap(Paciente::getId_paciente, p -> p.getNombre() + " " + p.getApellido()));
+
+            List<Medicamento> medicamentos = medicamentoInteractor.consultarMedicamentos();
+            historialViewModel.setCatalogoMedicamentos(medicamentos);
+            mapaMedicamentos = medicamentos.stream()
+                    .collect(Collectors.toMap(Medicamento::getId_medicamento, Medicamento::getNombre_comercial));
+
+        } catch (Exception e) {
+            addMessage(FacesMessage.SEVERITY_ERROR, "Error", "No se pudieron cargar datos (Pacientes/Medicamentos)");
+        }
+    }
+
+    public String getNombrePaciente(int idPaciente) {
+        return mapaPacientes.getOrDefault(idPaciente, "ID: " + idPaciente);
+    }
+
+    public String getNombreMedicamento(int idMedicamento) {
+        return mapaMedicamentos.getOrDefault(idMedicamento, "ID: " + idMedicamento);
+    }
+
+    public Map<Integer, String> getMapaPacientes() {
+        return mapaPacientes;
+    }
+
 
     public void cargarHistoriales(){
         historialViewModel.setEstaCargando(true);
@@ -56,9 +104,19 @@ public class HistorialBean implements Serializable {
     }
 
     public void cargarPrescripciones(int idHistorial){
-        List<Prescripcion> todas = prescripcionInteractor.consultarPrescripciones();
-        List<Prescripcion> filtrar = todas.stream().filter(p -> p.getId_historial_fk() == idHistorial).toList();
-        historialViewModel.setPrescripcionesDelHistorial(filtrar);
+        if (idHistorial == 0) {
+            historialViewModel.setPrescripcionesDelHistorial(List.of());
+            return;
+        }
+
+        try {
+            List<Prescripcion> todas = prescripcionInteractor.consultarPrescripciones();
+            List<Prescripcion> filtrar = todas.stream().filter(p -> p.getId_historial_fk() == idHistorial).toList();
+            historialViewModel.setPrescripcionesDelHistorial(filtrar);
+        } catch (Exception e) {
+            addMessage(FacesMessage.SEVERITY_ERROR, "Error", "No se pudieron cargar las prescripciones");
+            historialViewModel.setPrescripcionesDelHistorial(List.of());
+        }
     }
 
     public void guardarHistorial(){

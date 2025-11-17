@@ -31,7 +31,11 @@
 
                 <p:column headerText="ID"><h:outputText value="#{hist.id_historial}" /></p:column>
                 <p:column headerText="ID Cita"><h:outputText value="#{hist.id_cita_fk}" /></p:column>
-                <p:column headerText="ID Paciente"><h:outputText value="#{hist.id_paciente_fk}" /></p:column>
+
+                <p:column headerText="Paciente" filterBy="#{historialBean.getNombrePaciente(hist.id_paciente_fk)}" filterMatchMode="contains">
+                    <h:outputText value="#{historialBean.getNombrePaciente(hist.id_paciente_fk)}" />
+                </p:column>
+
                 <p:column headerText="Diagnóstico"><h:outputText value="#{hist.diagnostico}" /></p:column>
 
                 <p:column style="width:100px;text-align: center">
@@ -56,8 +60,14 @@
                             <p:outputLabel for="cita" value="ID Cita:" />
                             <p:inputText id="cita" value="#{historialBean.historialViewModel.historialSeleccionado.id_cita_fk}" required="true" />
 
-                            <p:outputLabel for="pac" value="ID Paciente:" />
-                            <p:inputText id="pac" value="#{historialBean.historialViewModel.historialSeleccionado.id_paciente_fk}" required="true" />
+                            <p:outputLabel for="pac" value="Paciente:" />
+                            <p:selectOneMenu id="pac" value="#{historialBean.historialViewModel.historialSeleccionado.id_paciente_fk}" required="true" filter="true" filterMatchMode="contains">
+                                <f:selectItem itemLabel="Seleccione paciente" itemValue="" />
+                                <f:selectItems value="#{historialBean.mapaPacientes.entrySet()}"
+                                               var="entry"
+                                               itemLabel="#{entry.value}"
+                                               itemValue="#{entry.key}" />
+                            </p:selectOneMenu>
 
                             <p:outputLabel for="diag" value="Diagnóstico:" />
                             <p:inputTextarea id="diag" value="#{historialBean.historialViewModel.historialSeleccionado.diagnostico}" required="true" rows="3"/>
@@ -76,7 +86,9 @@
                         <p:panel header="Prescripciones" rendered="#{historialBean.historialViewModel.historialSeleccionado.id_historial != 0}">
 
                             <p:dataTable value="#{historialBean.historialViewModel.prescripcionesDelHistorial}" var="pres">
-                                <p:column headerText="ID Med"><h:outputText value="#{pres.id_medicamento_fk}" /></p:column>
+                                <p:column headerText="Medicamento">
+                                    <h:outputText value="#{historialBean.getNombreMedicamento(pres.id_medicamento_fk)}" />
+                                </p:column>
                                 <p:column headerText="Dosis"><h:outputText value="#{pres.dosis}" /></p:column>
                                 <p:column headerText="Cant"><h:outputText value="#{pres.cantidad}" /></p:column>
                                 <p:column>
@@ -88,9 +100,16 @@
                             </p:dataTable>
 
                             <p:panelGrid columns="4" style="margin-top: 10px;">
-                                <p:inputText placeholder="ID Medicamento" value="#{historialBean.historialViewModel.prescripcionNueva.id_medicamento_fk}"/>
-                                <p:inputText placeholder="Dosis" value="#{historialBean.historialViewModel.prescripcionNueva.dosis}"/>
-                                <p:inputText placeholder="Cantidad" value="#{historialBean.historialViewModel.prescripcionNueva.cantidad}"/>
+                                <p:selectOneMenu value="#{historialBean.historialViewModel.prescripcionNueva.id_medicamento_fk}" filter="true" filterMatchMode="contains" required="true">
+                                    <f:selectItem itemLabel="Medicamento" itemValue="" />
+                                    <f:selectItems value="#{historialBean.historialViewModel.catalogoMedicamentos}"
+                                                   var="med"
+                                                   itemLabel="#{med.nombre_comercial}"
+                                                   itemValue="#{med.id_medicamento}" />
+                                </p:selectOneMenu>
+
+                                <p:inputText placeholder="Dosis" value="#{historialBean.historialViewModel.prescripcionNueva.dosis}" required="true"/>
+                                <p:inputText placeholder="Cantidad" value="#{historialBean.historialViewModel.prescripcionNueva.cantidad}" required="true"/>
                                 <p:commandButton value="Agregar"
                                                  actionListener="#{historialBean.agregarPrescripcion()}"
                                                  update="panelPrescripciones"/>

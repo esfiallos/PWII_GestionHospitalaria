@@ -24,25 +24,23 @@ public class CitaInteractorImpl implements ICitaInteractor {
         return this.citaRepository.buscarPorId(id);
     }
 
+
     @Override
     public boolean agendarCita(CitaMedica cita) {
+        // 1. La validación principal sigue igual
         if (cita.getId_paciente_fk() == 0 || cita.getId_doctor_fk() == 0 || cita.getFecha_hora_cita() == null) {
             System.err.println("Error de negocio: Paciente, Doctor y Fecha son obligatorios.");
             return false;
         }
 
-        try {
-            java.time.LocalDateTime fechaCita = java.time.LocalDateTime.parse(cita.getFecha_hora_cita());
-            if (fechaCita.isBefore(java.time.LocalDateTime.now())) {
-                System.err.println("Error de negocio: No se puede agendar una cita en el pasado.");
-                return false;
-            }
-        } catch (Exception e) {
-            System.err.println("Error: Formato de fecha inválido.");
+        // 2. La validación de fecha ahora es MÁS FÁCIL.
+        // Compara un objeto Date contra un nuevo objeto Date (ahora).
+        if (cita.getFecha_hora_cita().before(new java.util.Date())) {
+            System.err.println("Error de negocio: No se puede agendar una cita en el pasado.");
             return false;
         }
 
-        // Aquí podrías validar que la fecha no sea en el pasado
+
         return this.citaRepository.crear(cita);
     }
 

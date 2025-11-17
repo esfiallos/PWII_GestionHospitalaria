@@ -126,28 +126,41 @@ public class DashboardBean implements Serializable {
             LocalDateTime ahora = LocalDateTime.now();
 
             this.proximasCitas = todasLasCitas.stream()
-                    // 1. Convertir a un par de [Cita, LocalDateTime], filtrando fechas malas
+                    // 1. Convertir a un par de [Cita, LocalDateTime]
                     .map(cita -> {
                         try {
-                            // Usar ZonedDateTime para manejar correctamente el 'Z' (UTC)
-                            ZonedDateTime zdt = ZonedDateTime.parse(cita.getFecha_hora_cita());
-                            // Convertir a la fecha/hora local del servidor
-                            LocalDateTime ldt = zdt.toLocalDateTime();
+                            // ¡YA NO PARSEAMOS! Ahora convertimos el Date.
+                            java.util.Date fechaComoDate = cita.getFecha_hora_cita();
+
+                            // Si la fecha es nula en la BD, saltar
+                            if (fechaComoDate == null) {
+                                return null;
+                            }
+
+                            // Convertir java.util.Date a java.time.LocalDateTime
+                            LocalDateTime ldt = fechaComoDate.toInstant()
+                                    .atZone(java.time.ZoneId.systemDefault()) // Usa la zona horaria del servidor
+                                    .toLocalDateTime();
+
                             return Map.entry(cita, ldt);
-                        } catch (DateTimeParseException e) {
-                            // El log que viste se imprimirá aquí, y esta cita se descartará
-                            System.err.println("Error parseando fecha: " + cita.getFecha_hora_cita());
+
+                        } catch (Exception e) {
+                            // Error al convertir la fecha
+                            System.err.println("Error convirtiendo fecha para cita ID: " + cita.getId_cita());
                             return null;
                         }
                     })
-                    .filter(Objects::nonNull) // Quitar las entradas con fechas nulas/malas
+                    .filter(Objects::nonNull) // Quitar las entradas nulas
                     // 2. Filtrar canceladas y pasadas
                     .filter(entry -> {
                         CitaMedica cita = entry.getKey();
                         LocalDateTime fechaCita = entry.getValue();
                         boolean isCancelled = "CANCELADA".equalsIgnoreCase(cita.getEstado_cita());
-                        boolean isFuture = fechaCita.isAfter(ahora) || fechaCita.toLocalDate().isEqual(ahora.toLocalDate());
-                        return !isCancelled && isFuture;
+
+                        // Compara si la cita es HOY o en el FUTURO
+                        boolean isFutureOrToday = !fechaCita.toLocalDate().isBefore(ahora.toLocalDate());
+
+                        return !isCancelled && isFutureOrToday;
                     })
                     // 3. Ordenar por fecha (más próxima primero)
                     .sorted(Map.Entry.comparingByValue())
@@ -163,9 +176,7 @@ public class DashboardBean implements Serializable {
         }
     }
 
-    // --- parseFechaCita() eliminado, ya no se necesita ---
 
-    // --- Getters (Devuelven STRINGS) ---
     public String getPieModelJson() {
         return pieModelJson;
     }
