@@ -27,20 +27,20 @@ public class CitaInteractorImpl implements ICitaInteractor {
 
     @Override
     public boolean agendarCita(CitaMedica cita) {
-        // 1. La validación principal sigue igual
+
         if (cita.getId_paciente_fk() == 0 || cita.getId_doctor_fk() == 0 || cita.getFecha_hora_cita() == null) {
             System.err.println("Error de negocio: Paciente, Doctor y Fecha son obligatorios.");
             return false;
         }
 
-        // 2. La validación de fecha ahora es MÁS FÁCIL.
-        // Compara un objeto Date contra un nuevo objeto Date (ahora).
+
+        // Compara un objeto Date contra un nuevo objeto Date
         if (cita.getFecha_hora_cita().before(new java.util.Date())) {
             System.err.println("Error de negocio: No se puede agendar una cita en el pasado.");
             return false;
         }
 
-        cita.setEstado_cita("AGENDADA");
+        cita.setEstado_cita("PROGRAMADA");
 
         return this.citaRepository.crear(cita);
     }

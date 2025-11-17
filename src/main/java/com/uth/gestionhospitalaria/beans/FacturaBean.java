@@ -95,13 +95,7 @@ public class FacturaBean implements Serializable {
                 resultado = facturaInteractor.actualizarFactura(factura);
                 mensaje = resultado ? "Factura actualizada" : "Error al actualizar la factura";
 
-                if(resultado) {
-                    resultado = facturaInteractor.consultarFacturaPorId(factura.getId_factura()) != null &&
-                            facturaInteractor.marcarComoPagada(factura.getId_factura());
-                    mensaje = resultado ? "Factura actualizada" : "Error al actualizar la factura";
-                } else {
-                    mensaje = "Factura no encontrada";
-                }
+
             }
 
             if (resultado) {

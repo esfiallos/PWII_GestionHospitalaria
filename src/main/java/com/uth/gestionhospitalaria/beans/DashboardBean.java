@@ -55,23 +55,53 @@ public class DashboardBean implements Serializable {
     @PostConstruct
     public void init() {
 
-        cargarDatosRelacionados();
 
 
-        cargarEstadisticasCitas();
-        cargarEstadisticasGenerales();
+        List<Paciente> pacientes;
+        List<Usuario> usuarios;
+        List<CitaMedica> citas;
+
+        try {
+            pacientes = pacienteInteractor.consultarPacientes();
+        } catch (Exception e) {
+            System.err.println("Error cargando pacientes para Dashboard: " + e.getMessage());
+            pacientes = Collections.emptyList();
+        }
+
+        try {
+            usuarios = usuarioInteractor.consultarUsuarios();
+        } catch (Exception e) {
+            System.err.println("Error cargando usuarios para Dashboard: " + e.getMessage());
+            usuarios = Collections.emptyList();
+        }
+
+        try {
+            citas = citaInteractor.consultarCitas();
+        } catch (Exception e) {
+            System.err.println("Error cargando citas para Dashboard: " + e.getMessage());
+            citas = Collections.emptyList();
+        }
 
 
-        cargarProximasCitas();
+
+        cargarDatosRelacionados(pacientes, usuarios);
+        cargarEstadisticasCitas(citas);
+        cargarEstadisticasGenerales(pacientes, usuarios);
+        cargarProximasCitas(citas);
+
+
     }
 
-    private void cargarDatosRelacionados() {
+
+
+    private void cargarDatosRelacionados(List<Paciente> pacientes, List<Usuario> usuarios) {
         try {
-            List<Paciente> pacientes = pacienteInteractor.consultarPacientes();
+
             mapaPacientes = pacientes.stream()
                     .collect(Collectors.toMap(Paciente::getId_paciente, p -> p.getNombre() + " " + p.getApellido()));
 
-            List<Usuario> doctores = usuarioInteractor.consultarUsuarios().stream()
+
+            List<Usuario> doctores = usuarios.stream()
                     .filter(u -> "DOCTOR".equalsIgnoreCase(u.getRol()))
                     .toList();
             mapaDoctores = doctores.stream()
@@ -84,9 +114,9 @@ public class DashboardBean implements Serializable {
         }
     }
 
-    private void cargarEstadisticasCitas() {
+    private void cargarEstadisticasCitas(List<CitaMedica> citas) {
         try {
-            List<CitaMedica> citas = citaInteractor.consultarCitas();
+
             this.conteoPorEstado = citas.stream()
                     .filter(c -> c.getEstado_cita() != null)
                     .collect(Collectors.groupingBy(CitaMedica::getEstado_cita, Collectors.counting()));
@@ -96,10 +126,10 @@ public class DashboardBean implements Serializable {
         }
     }
 
-    private void cargarEstadisticasGenerales() {
+    private void cargarEstadisticasGenerales(List<Paciente> pacientes, List<Usuario> usuarios) {
         try {
-            this.totalPacientes = pacienteInteractor.consultarPacientes().size();
-            List<Usuario> usuarios = usuarioInteractor.consultarUsuarios();
+
+            this.totalPacientes = pacientes.size();
             this.totalDoctores = usuarios.stream().filter(u -> "DOCTOR".equalsIgnoreCase(u.getRol())).count();
             this.totalRecepcionistas = usuarios.stream().filter(u -> "RECEPCIONISTA".equalsIgnoreCase(u.getRol())).count();
         } catch (Exception e) {
@@ -110,9 +140,9 @@ public class DashboardBean implements Serializable {
         }
     }
 
-    private void cargarProximasCitas() {
+    private void cargarProximasCitas(List<CitaMedica> todasLasCitas) {
         try {
-            List<CitaMedica> todasLasCitas = citaInteractor.consultarCitas();
+            // Ya no consultamos la red, usamos la lista de citas
             LocalDateTime ahora = LocalDateTime.now();
 
             this.proximasCitas = todasLasCitas.stream()
@@ -189,6 +219,6 @@ public class DashboardBean implements Serializable {
     }
 
     public String getNombreDoctor(int idDoctor) {
-        return mapaDoctores.getOrDefault(idDoctor, "ID: " + idDoctor);
+        return mapaDoctores.getOrDefault(idDoctor, "ID:"  + idDoctor);
     }
 }

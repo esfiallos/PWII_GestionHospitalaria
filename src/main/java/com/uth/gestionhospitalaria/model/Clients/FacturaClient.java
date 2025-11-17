@@ -18,7 +18,6 @@ public interface FacturaClient {
     @PUT("facturas/{id}")
     Call<Void> actualizar(@Path("id") int id, @Body Factura factura);
 
-    // (DELETE para facturas no es común, pero lo ponemos por el patrón)
     @DELETE("facturas/{id}")
     Call<Void> eliminar(@Path("id") int id);
 }

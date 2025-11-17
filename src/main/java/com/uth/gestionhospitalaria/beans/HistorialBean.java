@@ -132,8 +132,13 @@ public class HistorialBean implements Serializable {
         boolean resultado;
         String mensaje;
 
+        // --- INICIO DE LA CORRECCIÓN ---
+        // Mantenemos un registro de si era un nuevo historial
+        boolean esNuevo = historial.getId_historial() == 0;
+        // --- FIN DE LA CORRECCIÓN ---
+
         try {
-            if (historial.getId_historial() == 0) {
+            if (esNuevo) {
                 resultado = historialInteractor.registrarEnHistorial(historial);
                 mensaje = resultado ? "Historial registrado" : "Error al registrar";
             } else {
@@ -143,7 +148,13 @@ public class HistorialBean implements Serializable {
 
             if (resultado) {
                 cargarHistoriales();
-                nuevoHistorial();
+
+
+                if (esNuevo) {
+                    mensaje += ". Cierre este diálogo y edite el nuevo registro para agregar prescripciones.";
+                }
+
+
                 addMessage(FacesMessage.SEVERITY_INFO, "Éxito", mensaje);
             } else {
                 addMessage(FacesMessage.SEVERITY_ERROR, "Error", mensaje);
