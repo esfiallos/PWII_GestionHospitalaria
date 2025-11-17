@@ -69,13 +69,19 @@ public class UsuarioBean implements Serializable {
 
     public void eliminar() {
         try {
-            boolean resultado = usuarioInteractor.eliminarUsuario(usuarioViewModel.getUsuarioSeleccionado().getId_usuario());
+
+            Usuario usuario = usuarioViewModel.getUsuarioSeleccionado();
+
+            usuario.setEstado("INACTIVO");
+
+            boolean resultado = usuarioInteractor.actualizarUsuario(usuario);
+
             if (resultado) {
-                addMessage(FacesMessage.SEVERITY_INFO, "Éxito", "Usuario eliminado");
+                addMessage(FacesMessage.SEVERITY_INFO, "Éxito", "Usuario desactivado correctamente");
                 cargarUsuarios();
                 nuevo();
             } else {
-                addMessage(FacesMessage.SEVERITY_ERROR, "Error", "No se pudo eliminar el usuario");
+                addMessage(FacesMessage.SEVERITY_ERROR, "Error", "No se pudo desactivar el usuario");
             }
         } catch (Exception e) {
             addMessage(FacesMessage.SEVERITY_FATAL, "Error grave", e.getMessage());

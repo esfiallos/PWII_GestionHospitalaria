@@ -13,6 +13,7 @@ import java.util.Collections;
 import java.util.List;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class CitasRepositoryImpl implements ICitaRepository {
 
@@ -82,7 +83,11 @@ public class CitasRepositoryImpl implements ICitaRepository {
 
     @Override
     public List<CitaMedica> listarPorPaciente(int id) {
-        return List.of();
+        List<CitaMedica> todasLasCitas = this.listarTodas();
+
+        return todasLasCitas.stream()
+                .filter(cita -> cita.getId_paciente_fk() == id)
+                .collect(Collectors.toList());
     }
 
 }

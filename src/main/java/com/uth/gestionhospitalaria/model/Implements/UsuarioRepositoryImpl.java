@@ -53,11 +53,9 @@ public class UsuarioRepositoryImpl implements IUsuarioRepository {
     @Override
     public boolean crear(Usuario usuario) {
         try {
-            // Llama al método 'crear' del cliente
             Call<Void> call = usuarioClient.crear(usuario);
-            // Ejecuta la llamada
             Response<Void> response = call.execute();
-            return response.isSuccessful();
+            return response.isSuccessful() || response.code() == 201;
         } catch (IOException e) {
             e.printStackTrace();
             return false;
@@ -84,7 +82,8 @@ public class UsuarioRepositoryImpl implements IUsuarioRepository {
         try {
             Call<Void> call = usuarioClient.eliminar(id);
             Response<Void> response = call.execute();
-            return response.isSuccessful();
+            // CORRECCIÓN: Añadir la comprobación del código 204
+            return response.isSuccessful() || response.code() == 204;
         } catch (IOException e) {
             e.printStackTrace();
             return false;
