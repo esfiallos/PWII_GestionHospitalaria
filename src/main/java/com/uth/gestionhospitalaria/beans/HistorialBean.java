@@ -1,15 +1,10 @@
 package com.uth.gestionhospitalaria.beans;
 
-import com.uth.gestionhospitalaria.controller.Implements.HistorialInteractorImpl;
-import com.uth.gestionhospitalaria.controller.Implements.MedicamentoInteractorImpl;
-import com.uth.gestionhospitalaria.controller.Implements.PacienteInteractorImpl;
-import com.uth.gestionhospitalaria.controller.Implements.PrescripcionInteractorImpl;
+import com.uth.gestionhospitalaria.controller.Implements.*;
+import com.uth.gestionhospitalaria.controller.Interactor.ICitaInteractor;
 import com.uth.gestionhospitalaria.controller.Interactor.IMedicamentoInteractor;
 import com.uth.gestionhospitalaria.controller.Interactor.IPacienteInteractor;
-import com.uth.gestionhospitalaria.data.HistorialClinico;
-import com.uth.gestionhospitalaria.data.Medicamento;
-import com.uth.gestionhospitalaria.data.Paciente;
-import com.uth.gestionhospitalaria.data.Prescripcion;
+import com.uth.gestionhospitalaria.data.*;
 import com.uth.gestionhospitalaria.view.HistorialViewModel;
 import jakarta.annotation.PostConstruct;
 import jakarta.faces.application.FacesMessage;
@@ -22,6 +17,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import java.util.Set;
+
 @Named("historialBean")
 @ViewScoped
 public class HistorialBean implements Serializable {
@@ -33,8 +30,12 @@ public class HistorialBean implements Serializable {
     private IPacienteInteractor pacienteInteractor;
     private IMedicamentoInteractor medicamentoInteractor;
 
+    private ICitaInteractor citaInteractor;
+
     private Map<Integer, String> mapaPacientes;
     private Map<Integer, String> mapaMedicamentos;
+
+    private List<CitaMedica> listaCitasCargadas;
 
     @PostConstruct
     public void init() {
@@ -44,6 +45,8 @@ public class HistorialBean implements Serializable {
 
         this.pacienteInteractor = new PacienteInteractorImpl();
         this.medicamentoInteractor = new MedicamentoInteractorImpl();
+        this.citaInteractor = new CitaInteractorImpl();
+
         cargarDatosRelacionados();
 
         cargarHistoriales();
@@ -51,6 +54,7 @@ public class HistorialBean implements Serializable {
 
     private void cargarDatosRelacionados() {
         try {
+            // Cargar Pacientes y Medicamentos (como ya estaba)
             List<Paciente> pacientes = pacienteInteractor.consultarPacientes();
             mapaPacientes = pacientes.stream()
                     .collect(Collectors.toMap(Paciente::getId_paciente, p -> p.getNombre() + " " + p.getApellido()));
@@ -60,16 +64,44 @@ public class HistorialBean implements Serializable {
             mapaMedicamentos = medicamentos.stream()
                     .collect(Collectors.toMap(Medicamento::getId_medicamento, Medicamento::getNombre_comercial));
 
+            // --- LÓGICA MEJORADA ---
+            // 1. Cargar todas las citas y todos los historiales
+            this.listaCitasCargadas = citaInteractor.consultarCitas();
+            List<HistorialClinico> historialesActuales = historialInteractor.consultarHistoriales();
+            historialViewModel.setListaHistoriales(historialesActuales); // <-- Actualiza la lista principal
+
+            // 2. Obtener los IDs de las citas que YA tienen un historial
+            Set<Integer> idsCitasConHistorial = historialesActuales.stream()
+                    .map(HistorialClinico::getId_cita_fk)
+                    .collect(Collectors.toSet());
+
+            // 3. Filtrar la lista de citas
+            List<CitaMedica> citasSinHistorial = this.listaCitasCargadas.stream()
+                    .filter(cita -> "COMPLETADA".equalsIgnoreCase(cita.getEstado_cita())) // (O 'PROGRAMADA' si se arregló)
+                    .filter(cita -> !idsCitasConHistorial.contains(cita.getId_cita())) // <-- Solo las que NO tienen historial
+                    .collect(Collectors.toList());
+
+            // 4. Guardar la lista filtrada en el ViewModel
+            historialViewModel.setListaCitasParaHistorial(citasSinHistorial);
+
+
         } catch (Exception e) {
-            addMessage(FacesMessage.SEVERITY_ERROR, "Error", "No se pudieron cargar datos (Pacientes/Medicamentos)");
+            addMessage(FacesMessage.SEVERITY_ERROR, "Error", "No se pudieron cargar datos (Pacientes/Medicamentos/Citas)");
+        }
+    }
 
+    public void onCitaChange() {
+        int idCitaSeleccionada = historialViewModel.getHistorialSeleccionado().getId_cita_fk();
 
-            mapaPacientes = java.util.Collections.emptyMap();
-            mapaMedicamentos = java.util.Collections.emptyMap();
+        if (idCitaSeleccionada == 0) return;
 
-            if (historialViewModel != null) {
-                historialViewModel.setCatalogoMedicamentos(java.util.Collections.emptyList());
-            }
+        CitaMedica citaSeleccionada = this.listaCitasCargadas.stream()
+                .filter(c -> c.getId_cita() == idCitaSeleccionada)
+                .findFirst()
+                .orElse(null);
+
+        if (citaSeleccionada != null) {
+            historialViewModel.getHistorialSeleccionado().setId_paciente_fk(citaSeleccionada.getId_paciente_fk());
         }
     }
 
@@ -132,10 +164,9 @@ public class HistorialBean implements Serializable {
         boolean resultado;
         String mensaje;
 
-        // --- INICIO DE LA CORRECCIÓN ---
-        // Mantenemos un registro de si era un nuevo historial
+
         boolean esNuevo = historial.getId_historial() == 0;
-        // --- FIN DE LA CORRECCIÓN ---
+
 
         try {
             if (esNuevo) {

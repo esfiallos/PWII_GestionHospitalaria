@@ -1,5 +1,6 @@
 package com.uth.gestionhospitalaria.view;
 
+import com.uth.gestionhospitalaria.data.CitaMedica;
 import com.uth.gestionhospitalaria.data.HistorialClinico;
 import com.uth.gestionhospitalaria.data.Prescripcion;
 import com.uth.gestionhospitalaria.data.Medicamento;
@@ -23,6 +24,8 @@ public class HistorialViewModel {
     /** Almacena el catálogo de medicamentos para un dropdown */
     private List<Medicamento> catalogoMedicamentos;
 
+    private List<CitaMedica> listaCitasParaHistorial;
+
 
     public HistorialViewModel() {
         this.listaHistoriales = new ArrayList<>();
@@ -30,10 +33,11 @@ public class HistorialViewModel {
         this.estaCargando = false;
         this.mensajeError = null;
 
-        // --- Inicializar los nuevos campos ---
+
         this.prescripcionesDelHistorial = new ArrayList<>();
         this.prescripcionNueva = new Prescripcion();
         this.catalogoMedicamentos = new ArrayList<>();
+        this.listaCitasParaHistorial = new ArrayList<>();
     }
 
     // --- Getters y Setters ---
@@ -94,5 +98,13 @@ public class HistorialViewModel {
 
     public void setCatalogoMedicamentos(List<Medicamento> catalogoMedicamentos) {
         this.catalogoMedicamentos = catalogoMedicamentos;
+    }
+
+    public List<CitaMedica> getListaCitasParaHistorial() {
+        return listaCitasParaHistorial;
+    }
+
+    public void setListaCitasParaHistorial(List<CitaMedica> listaCitasParaHistorial) {
+        this.listaCitasParaHistorial = listaCitasParaHistorial;
     }
 }
