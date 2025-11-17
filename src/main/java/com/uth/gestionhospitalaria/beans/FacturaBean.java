@@ -92,8 +92,9 @@ public class FacturaBean implements Serializable {
                 mensaje = resultado ? "Factura generada" : "Error al generar la factura";
             } else {
 
-                resultado = facturaInteractor.consultarFacturaPorId(factura.getId_factura()) != null &&
-                        facturaInteractor.consultarFacturaPorId(factura.getId_factura()).getEstado_pago() != null;
+                resultado = facturaInteractor.actualizarFactura(factura);
+                mensaje = resultado ? "Factura actualizada" : "Error al actualizar la factura";
+
                 if(resultado) {
                     resultado = facturaInteractor.consultarFacturaPorId(factura.getId_factura()) != null &&
                             facturaInteractor.marcarComoPagada(factura.getId_factura());

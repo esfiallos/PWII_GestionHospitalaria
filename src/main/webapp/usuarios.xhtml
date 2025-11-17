@@ -44,59 +44,62 @@
                         <f:setPropertyActionListener value="#{user}" target="#{usuarioBean.viewModel.usuarioSeleccionado}" />
                     </p:commandButton>
 
-                    <p:commandButton icon="pi pi-trash"
+                    <p:commandButton icon="pi pi-user-minus"
                                      actionListener="#{usuarioBean.eliminar()}"
                                      update=":form:tablaUsuarios"
                                      styleClass="rounded-button ui-button-danger"
                                      process="@this">
                         <f:setPropertyActionListener value="#{user}" target="#{usuarioBean.viewModel.usuarioSeleccionado}" />
-                        <p:confirm header="Confirmación" message="¿Seguro que desea eliminar a #{user.nombre}?" icon="pi pi-exclamation-triangle"/>
+                        <p:confirm header="Confirmación" message="¿Seguro que desea DESACTIVAR a #{user.nombre}?"
+                                   icon="pi pi-exclamation-triangle"/>
                     </p:commandButton>
                 </p:column>
             </p:dataTable>
 
             <p:dialog header="Datos del Usuario" widgetVar="dialogoUsuario" modal="true" resizable="false" appendTo="@(this)">                <p:outputPanel id="panelDialogo" style="text-align:center;">
-                    <p:panelGrid columns="2" style="margin: 0 auto;">
+                <p:panelGrid columns="2" style="margin: 0 auto;">
 
-                        <p:outputLabel for="dni" value="DNI:" />
-                        <p:inputText id="dni" value="#{usuarioBean.viewModel.usuarioSeleccionado.dni}" required="true" />
+                    <p:outputLabel for="dni" value="DNI:" />
+                    <p:inputText id="dni" value="#{usuarioBean.viewModel.usuarioSeleccionado.dni}" required="true" />
 
-                        <p:outputLabel for="nombre" value="Nombre:" />
-                        <p:inputText id="nombre" value="#{usuarioBean.viewModel.usuarioSeleccionado.nombre}" required="true" />
+                    <p:outputLabel for="nombre" value="Nombre:" />
+                    <p:inputText id="nombre" value="#{usuarioBean.viewModel.usuarioSeleccionado.nombre}" required="true" />
 
-                        <p:outputLabel for="apellido" value="Apellido:" />
-                        <p:inputText id="apellido" value="#{usuarioBean.viewModel.usuarioSeleccionado.apellido}" required="true" />
+                    <p:outputLabel for="apellido" value="Apellido:" />
+                    <p:inputText id="apellido" value="#{usuarioBean.viewModel.usuarioSeleccionado.apellido}" required="true" />
 
-                        <p:outputLabel for="email" value="Email:" />
-                        <p:inputText id="email" value="#{usuarioBean.viewModel.usuarioSeleccionado.email}" />
+                    <p:outputLabel
+                            for="email" value="Email:" />
+                    <p:inputText id="email" value="#{usuarioBean.viewModel.usuarioSeleccionado.email}" />
 
-                        <p:outputLabel for="pass" value="Password:" rendered="#{usuarioBean.viewModel.usuarioSeleccionado.id_usuario == 0}"/>
-                        <p:password id="pass" value="#{usuarioBean.viewModel.usuarioSeleccionado.password}" rendered="#{usuarioBean.viewModel.usuarioSeleccionado.id_usuario == 0}"/>
+                    <p:outputLabel for="pass" value="Password:" rendered="#{usuarioBean.viewModel.usuarioSeleccionado.id_usuario == 0}"/>
+                    <p:password id="pass" value="#{usuarioBean.viewModel.usuarioSeleccionado.password}" rendered="#{usuarioBean.viewModel.usuarioSeleccionado.id_usuario == 0}"/>
 
-                        <p:outputLabel for="rol" value="Rol:" />
-                        <p:selectOneMenu id="rol" value="#{usuarioBean.viewModel.usuarioSeleccionado.rol}" required="true">
-                            <f:selectItem itemLabel="Seleccione Rol" itemValue="" />
-                            <f:selectItem itemLabel="Admin" itemValue="ADMIN" />
-                            <f:selectItem itemLabel="Doctor" itemValue="DOCTOR" />
-                            <f:selectItem itemLabel="Recepcionista" itemValue="RECEPCIONISTA" />
-                        </p:selectOneMenu>
+                    <p:outputLabel for="rol" value="Rol:" />
+                    <p:selectOneMenu id="rol" value="#{usuarioBean.viewModel.usuarioSeleccionado.rol}" required="true">
+                        <f:selectItem itemLabel="Seleccione Rol" itemValue="" />
+                        <f:selectItem itemLabel="Admin" itemValue="ADMIN" />
+                        <f:selectItem itemLabel="Doctor" itemValue="DOCTOR" />
+                        <f:selectItem itemLabel="Recepcionista" itemValue="RECEPCIONISTA" />
+                    </p:selectOneMenu>
 
-                        <p:outputLabel for="estado" value="Estado:" />
-                        <p:selectOneMenu id="estado" value="#{usuarioBean.viewModel.usuarioSeleccionado.estado}">
-                            <f:selectItem itemLabel="Activo" itemValue="ACTIVO" />
-                            <f:selectItem itemLabel="Inactivo" itemValue="INACTIVO" />
-                        </p:selectOneMenu>
+                    <p:outputLabel for="estado" value="Estado:" />
+                    <p:selectOneMenu id="estado" value="#{usuarioBean.viewModel.usuarioSeleccionado.estado}">
+                        <f:selectItem itemLabel="Activo" itemValue="ACTIVO" />
+                        <f:selectItem itemLabel="Inactivo" itemValue="INACTIVO" />
+                    </p:selectOneMenu>
 
-                        <p:outputLabel for="esp" value="Especialidad:" />
-                        <p:inputText id="esp" value="#{usuarioBean.viewModel.usuarioSeleccionado.especialidad}" />
+                    <p:outputLabel for="esp" value="Especialidad:" />
+                    <p:inputText id="esp" value="#{usuarioBean.viewModel.usuarioSeleccionado.especialidad}" />
 
-                    </p:panelGrid>
+                </p:panelGrid>
 
-                    <p:commandButton value="Guardar"
-                                     actionListener="#{usuarioBean.guardar()}"
-                                     update=":form:tablaUsuarios"
-                                     oncomplete="if (args &amp;&amp; !args.validationFailed) PF('dialogoUsuario').hide();" />
-                </p:outputPanel>
+                <p:commandButton value="Guardar"
+                                 actionListener="#{usuarioBean.guardar()}"
+                                 update=":form:tablaUsuarios"
+                                 oncomplete="if (args &amp;&amp;
+!args.validationFailed) PF('dialogoUsuario').hide();" />
+            </p:outputPanel>
             </p:dialog>
         </h:form>
     </ui:define>

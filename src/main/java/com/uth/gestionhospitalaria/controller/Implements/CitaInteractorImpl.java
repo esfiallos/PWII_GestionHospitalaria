@@ -40,6 +40,7 @@ public class CitaInteractorImpl implements ICitaInteractor {
             return false;
         }
 
+        cita.setEstado_cita("AGENDADA");
 
         return this.citaRepository.crear(cita);
     }

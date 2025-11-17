@@ -44,4 +44,13 @@ public class FacturaInteractorImpl implements IFacturaInteractor {
         factura.setEstado_pago("PAGADA");
         return this.facturaRepository.actualizar(factura);
     }
+
+    @Override
+    public boolean actualizarFactura(Factura factura) {
+        if (factura.getId_factura() == 0) {
+            System.err.println("Error de negocio: No se puede actualizar una factura sin ID.");
+            return false;
+        }
+        return this.facturaRepository.actualizar(factura);
+    }
 }

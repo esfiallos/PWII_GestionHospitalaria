@@ -14,4 +14,6 @@ public interface IFacturaInteractor {
     boolean generarFactura(Factura factura);
 
     boolean marcarComoPagada(int idFactura);
+
+    boolean actualizarFactura(Factura factura);
 }
